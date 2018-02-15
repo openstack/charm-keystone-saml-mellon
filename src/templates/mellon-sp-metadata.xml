@@ -1,0 +1,17 @@
+<EntityDescriptor entityID="{{ options.sp_auth_url }}" xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	<SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+		<KeyDescriptor use="signing">
+			{{ options.sp_signing_keyinfo }}
+		</KeyDescriptor>
+		{% if options.saml_encryption %}
+		<KeyDescriptor use="encryption">
+			{{ options.sp_signing_keyinfo }}
+		</KeyDescriptor>
+		{% endif %}
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="{{ options.logout_url }}"/>
+		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ options.sp_post_response_url }}" index="0"/>
+		{% for format in options.supported_nameid_formats -%}
+		<NameIDFormat>{{ format }}</NameIDFormat>
+		{% endfor -%}
+	</SPSSODescriptor>
+</EntityDescriptor>

@@ -1,0 +1,7 @@
+includes: ['layer:openstack', 'layer:leadership', 'interface:keystone-fid-service-provider', 'interface:websso-fid-service-provider', 'interface:juju-info']
+options:
+  basic:
+    use_venv: True
+    include_system_packages: True
+    packages: ['python3-lxml', 'python3-cryptography']
+    repo: https://github.com/dshcherb/charm-keystone-saml-mellon

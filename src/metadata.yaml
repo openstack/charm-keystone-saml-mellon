@@ -1,0 +1,74 @@
+name: keystone-saml-mellon
+subordinate: true
+maintainer: OpenStack Charmers <openstack-charmers@lists.ubuntu.com>
+summary: Federated identity with SAML via Mellon Service Provider
+description:
+  The main goal of this charm is to generate the necessary configuration
+  for use in the Keystone charm related to Service Provider config
+  generation, trust establishment between a remote idP and SP via
+  certificates and signaling Keystone service restart.
+  Keystone has a concept of a federated backend which serves multiple
+  purposes including being a backend part of a Service Provider in an
+  authentication scenario where SAML is used. Unless ECP is used on a
+  keystone client side, SAML-related exchange is performed in an Apache
+  authentication module (Mellon in case of this charm) and SAML
+  assertions are converted to WSGI environment variables passed down to
+  a particular mod_wsgi interpreter running Keystone code. Keystone has
+  an authentication plug-in called "mapped" which does the rest of the
+  work of resolving symbolic attributes and using them in mappings
+  defined by an operator or validating the existence of referenced IDs.
+tags:
+  - openstack
+  - identity
+  - federation
+  - idP
+series:
+  - xenial
+  - bionic
+  - artful
+  - trusty
+provides:
+  keystone-fid-service-provider:
+    interface: keystone-fid-service-provider
+    scope: container
+  websso-fid-service-provider:
+    interface: websso-fid-service-provider
+    scope: global
+requires:
+  container:
+    interface: juju-info
+    scope: container
+resources:
+  idp-metadata:
+    type: file
+    filename: 'idp-metadata.xml'
+    description: |
+      Identity Provider metadata XML file that conforms to
+      saml-metadata-2.0-os specification. This file contains idP
+      identification information and its certificates with public keys
+      that can be used for signing and encryption on the idP side in
+      IDPSSODescriptor and other information which can be used on the
+      service provider side to interact with that idP.
+  sp-private-key:
+    type: file
+    filename: 'sp-private-key.pem'
+    description: |
+      Private key used by Service Provider (mod_auth_mellon) to sign
+      and/or SAML-level (not transport-level) encryption.
+  sp-signing-keyinfo:
+    type: file
+    filename: 'sp-signing-keyinfo.xml'
+    description: |
+      Specifies a signing KeyInfo portion of SPSSODescriptor to be used
+      in Service Provider metadata. This should be an XML portion
+      which in the simplest case is formatted as shown below:
+      This fragment should contain a certificate that contains a public
+      key of a Service Provider in case an idP requires that SAML
+      requests are signed.
+      The term “signing certificate” is a misnomer. A signing
+      certificate in metadata is actually used for signature
+      verification, not signing. The private signing key is held
+      securely by the signing party (SP in this case). In a SAML
+      exchange an SP signs SAML messages with its private key and idP
+      validates them via a public key embedded in a certificate present
+      in the SP's metadata XML and vice versa for idP.

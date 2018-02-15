@@ -1,0 +1,52 @@
+options:
+  protocol-name:
+    type: string
+    default: 'mapped'
+    description: |
+      Protocol name to use for URL and generation. Must match the one that
+      will be configured via OS-FEDERATION API.
+  idp-name:
+    type: string
+    default: 'myidp'
+    description: |
+      Identity provider name to use for URL generation. Must match the one
+      that will be configured via OS-FEDERATION API.
+  user-facing-name:
+    type: string
+    default: 'myidp via mapped'
+    description: |
+      A user-facing name to be used for the identity provider and protocol
+      combination. Used in the OpenStack dashboard.
+  saml-encryption:
+    type: boolean
+    default: false
+    description: |
+      (optional)
+      Specifies whether SAML assertion encryption should be used. In many
+      cases this option is not needed as TLS is used to encrypt data at
+      the transport level. This option results in Service Provider metadata
+      rendered with the same KeyInfo used for both singing and encryption.
+      In practice, this means that the private key specified in sp-private-key
+      will be used for both signing SAML messages to an idP and decryption of
+      messages sent by idP. idP has to receive the SP metadata file with a
+      public key (or a cert) present with use="encryption" specified.
+  nameid-formats:
+    type: string
+    default: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified,urn:oasis:names:tc:SAML:2.0:nameid-format:transient,urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress,urn:oasis:names:tc:SAML:2.0:nameid-format:persistent,urn:mace:shibboleth:1.0:nameIdentifier"
+    description: |
+      NameIDFormat entries to be used in Service Provider metadata file and in
+      SAML requests (comma-separated). Different NameID formats could be used
+      like transient, persistent, X509SubjectName, emailAddress, unspecified
+      and so on.
+  subject-confirmation-data-address-check:
+    type: boolean
+    default: true
+    description: |
+      This option is used to control the checking of client IP address
+      against the address returned by the IdP in Address attribute of
+      the SubjectConfirmationData node. Can be useful if your SP is
+      behind a reverse proxy or any kind of strange network topology
+      making IP address of client different for the IdP and the SP.
+      Default is on.
+      This can be used for testing with something like testshib if
+      you are behind a NAT.
