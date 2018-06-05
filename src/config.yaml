@@ -25,7 +25,7 @@ options:
       Specifies whether SAML assertion encryption should be used. In many
       cases this option is not needed as TLS is used to encrypt data at
       the transport level. This option results in Service Provider metadata
-      rendered with the same KeyInfo used for both singing and encryption.
+      rendered with the same KeyInfo used for both signing and encryption.
       In practice, this means that the private key specified in sp-private-key
       will be used for both signing SAML messages to an idP and decryption of
       messages sent by idP. idP has to receive the SP metadata file with a

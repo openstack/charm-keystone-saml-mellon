@@ -80,6 +80,12 @@ class KeystoneSAMLMellonConfigurationAdapter(
                 self._validation_errors.items() if v}
 
     @property
+    def remote_id_attribute(self):
+        # Mellon module environment variables are prefixed with MELLON_
+        # and mod_auth_mellon has a default setting of: MellonIdP "IDP"
+        return "MELLON_IDP"
+
+    @property
     def idp_metadata_file(self):
         return IDP_METADATA
 

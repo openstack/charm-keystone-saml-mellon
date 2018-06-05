@@ -104,15 +104,16 @@ def render_config():
     # don't always have a relation context - obtain from the flag
     fid_sp = endpoint_from_flag(
         'endpoint.keystone-fid-service-provider.joined')
-    # get the first relation object as we only have one primary relation
-    rel = fid_sp.relations[0]
     with charm.provide_charm_instance() as charm_instance:
         charm_instance.render_config()
         flags.set_flag('config.rendered')
         # Trigger keystone restart. The relation is container-scoped
         # so a per-unit db of a remote unit will only contain a nonce
         # of a single subordinate
-        rel.to_publish['restart-nonce'] = str(uuid.uuid4())
+        restart_nonce = str(uuid.uuid4())
+        fid_sp.publish(restart_nonce,
+                    charm_instance.options.protocol_name,
+                    charm_instance.options.remote_id_attribute)
 
 
 @reactive.when('endpoint.websso-fid-service-provider.joined')
