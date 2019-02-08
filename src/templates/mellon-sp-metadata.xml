@@ -1,5 +1,11 @@
-<EntityDescriptor entityID="{{ options.sp_auth_url }}" xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-	<SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+<EntityDescriptor
+	entityID="{{ options.sp_auth_url }}"
+	xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	<SPSSODescriptor
+		protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"
+		AuthnRequestsSigned="{{ options.authn_requests_signed|lower }}"
+		WantAssertionsSigned="{{ options.want_assertions_signed|lower }}">
 		<KeyDescriptor use="signing">
 			{{ options.sp_signing_keyinfo }}
 		</KeyDescriptor>

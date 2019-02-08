@@ -50,3 +50,15 @@ options:
       Default is on.
       This can be used for testing with something like testshib if
       you are behind a NAT.
+  authn-requests-signed:
+    type: boolean
+    default: true
+    description: |
+      Indicates whether the <samlp:AuthnRequest> messages sent by the
+      service provider (mellon) will be signed.
+  want-assertions-signed:
+    type: boolean
+    default: true
+    description: |
+      Indicates a requirement for the <saml:Assertion> elements received
+      by this service provider to be signed.
