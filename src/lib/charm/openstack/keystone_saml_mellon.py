@@ -155,13 +155,18 @@ class KeystoneSAMLMellonConfigurationAdapter(
         return '{}/postResponse'.format(self.mellon_endpoint_path)
 
     @property
+    def sp_logout_path(self):
+        return '{}/logout'.format(self.mellon_endpoint_path)
+
+    @property
     def sp_auth_url(self):
         return '{}{}'.format(self.keystone_base_url,
                              self.sp_auth_path)
 
     @property
     def sp_logout_url(self):
-        return '{}/logout'.format(self.mellon_endpoint_path)
+        return '{}{}'.format(self.keystone_base_url,
+                             self.sp_logout_path)
 
     @property
     def sp_post_response_url(self):
