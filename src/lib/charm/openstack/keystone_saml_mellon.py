@@ -192,7 +192,7 @@ class KeystoneSAMLMellonConfigurationAdapter(
             with open(idp_metadata_path) as f:
                 content = f.read()
                 try:
-                    etree.fromstring(content)
+                    etree.fromstring(content.encode())
                     self._idp_metadata = content
                     self._validation_errors['idp-metadata'] = None
                 except etree.XMLSyntaxError:
@@ -212,7 +212,7 @@ class KeystoneSAMLMellonConfigurationAdapter(
             with open(info_path) as f:
                 content = f.read()
                 try:
-                    etree.fromstring(content)
+                    etree.fromstring(content.encode())
                     self._sp_signing_keyinfo = content
                     self._validation_errors['sp-signing-keyinfo'] = None
                 except etree.XMLSyntaxError:
