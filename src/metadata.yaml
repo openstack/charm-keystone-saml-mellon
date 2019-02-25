@@ -25,8 +25,6 @@ tags:
 series:
   - xenial
   - bionic
-  - artful
-  - trusty
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
