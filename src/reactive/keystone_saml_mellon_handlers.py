@@ -112,8 +112,8 @@ def render_config():
         # of a single subordinate
         restart_nonce = str(uuid.uuid4())
         fid_sp.publish(restart_nonce,
-                    charm_instance.options.protocol_name,
-                    charm_instance.options.remote_id_attribute)
+                       charm_instance.options.protocol_name,
+                       charm_instance.options.remote_id_attribute)
 
 
 @reactive.when('endpoint.websso-fid-service-provider.joined')
