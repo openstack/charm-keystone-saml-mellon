@@ -15,9 +15,9 @@
 		</KeyDescriptor>
 		{% endif %}
 		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="{{ options.sp_logout_url }}"/>
-		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ options.sp_post_response_url }}" isDefault="true" index="0"/>
 		{% for format in options.supported_nameid_formats -%}
 		<NameIDFormat>{{ format }}</NameIDFormat>
 		{% endfor -%}
+		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ options.sp_post_response_url }}" isDefault="true" index="0"/>
 	</SPSSODescriptor>
 </EntityDescriptor>
