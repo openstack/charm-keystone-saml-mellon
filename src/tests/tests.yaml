@@ -1,0 +1,22 @@
+charm_name: keystone-saml-mellon
+smoke_bundles:
+- bionic-queens-smoke
+gate_bundles:
+- bionic-queens
+- bionic-queens-ha
+configure:
+- zaza.charm_tests.vault.setup.auto_inititialize
+- zaza.charm_tests.keystone.setup.add_demo_user
+- zaza.charm_tests.glance.setup.add_lts_image
+tests:
+- zaza.charm_tests.keystone.tests.AuthenticationAuthorizationTest
+target_deploy_status:
+  ntp:
+    workload-status: active
+    workload-status-message: "chrony: Ready"
+  vault:
+    workload-status: blocked
+    workload-status-message: Vault needs to be initialized
+  keystone-saml-mellon:
+    workload-status: blocked
+    workload-status-message: "Configuration is incomplete. idp-metadata: idp-metadata resource is not a well-formed xml file"

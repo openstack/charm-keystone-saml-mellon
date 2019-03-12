@@ -271,6 +271,10 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         SP_PRIVATE_KEY: ('options', 'sp_private_key'),
     }
 
+    # Render idp-metadata.xml and sp-private-key with www-data group
+    # ownership.
+    group = 'www-data'
+
     def configuration_complete(self):
         """Determine whether sufficient configuration has been provided
         via charm config options and resources.

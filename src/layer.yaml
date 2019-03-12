@@ -1,4 +1,5 @@
 includes: ['layer:openstack', 'layer:leadership', 'interface:keystone-fid-service-provider', 'interface:websso-fid-service-provider', 'interface:juju-info']
+repo: https://github.com/openstack-charmers/charm-keystone-saml-mellon
 options:
   basic:
     use_venv: True
