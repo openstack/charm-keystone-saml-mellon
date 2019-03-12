@@ -3,3 +3,4 @@
 *__pycache__*
 *.pyc
 build
+src/tests/bundles/overlays/local-charm-overlay.yaml.j2
