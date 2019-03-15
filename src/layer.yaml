@@ -5,4 +5,3 @@ options:
     use_venv: True
     include_system_packages: True
     packages: ['python3-lxml', 'python3-cryptography']
-    repo: https://github.com/dshcherb/charm-keystone-saml-mellon

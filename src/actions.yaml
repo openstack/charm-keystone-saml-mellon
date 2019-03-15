@@ -1,0 +1,4 @@
+get-sp-metadata:
+  description: |
+    Display the Service Provider metadata to be exchanged with the Identity
+    Provider.
