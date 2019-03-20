@@ -141,6 +141,7 @@ The key PEM file is the resource file for sp-private-key.pem. The certificate
 PEM data will be placed in an XML document and will become the
 sp-signing-keyinfo.xml resource file.
 
+```
 <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
     <ds:X509Data>
         <ds:X509Certificate>
@@ -153,7 +154,7 @@ sp-signing-keyinfo.xml resource file.
         </ds:X509Certificate>
     </ds:X509Data>
 </ds:KeyInfo>
-
+```
 
 Set the protocol. This must match the protocol used in the post-deployment
 configuration steps. We recommend the protocol "mapped."
@@ -177,7 +178,7 @@ Attach resources
 
 Get keystones SP metadata XML and exchange it with your idP
 
- juju run --unit keystone/0 "cat /etc/apache2/mellon/sp-meta.keystone-saml-mellon.xml"
+ juju run-action keystone-saml-mellon/0 get-sp-metadata
 
 # Post-deployment Configuration
 
