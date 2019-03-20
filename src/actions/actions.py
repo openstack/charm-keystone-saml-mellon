@@ -29,7 +29,7 @@ def get_sp_metadata(*args):
     sp_metadata = ""
     # By stripping double new lines and tabs we get human readable xml
     # Otherwise, show-action-status is a garbled mess
-    with open(SP_METADATA_FILE, 'r') as f:
+    with open(SP_METADATA_FILE, 'rt') as f:
         for line in f.readlines():
             line = line.replace("\t", "  ")
             if line.strip(" ") == "\n":
