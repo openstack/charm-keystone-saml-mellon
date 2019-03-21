@@ -19,6 +19,9 @@ sys.path.append('src/lib')
 sys.path.append('src/actions')
 
 # Mock out charmhelpers so that we can test without it.
+# NOTE: The bellow mocks are to avoid side effects at import time.
+# Any module that requires testing must be re-mocked before usage
+# in a unit test.
 import charms_openstack.test_mocks  # noqa
 charms_openstack.test_mocks.mock_charmhelpers()
 
