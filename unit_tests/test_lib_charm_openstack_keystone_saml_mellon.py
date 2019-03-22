@@ -45,13 +45,10 @@ class Helper(test_utils.PatchHelper):
         self.patch_release(
             keystone_saml_mellon.KeystoneSAMLMellonCharm.release)
 
-        self.patch_object(keystone_saml_mellon, 'unitdata',
+        self.patch_object(keystone_saml_mellon, 'endpoint_from_flag',
                           new=mock.MagicMock())
-        self.kv = mock.MagicMock()
-        self.unitdata.kv.return_value = self.kv
-
-        self.patch_object(keystone_saml_mellon.os_utils, 'os_release',
-                          new=mock.MagicMock())
+        self.endpoint = mock.MagicMock()
+        self.endpoint_from_flag.return_value = self.endpoint
 
         self.idp_name = "samltest"
         self.protocol_name = "mapped"
@@ -100,19 +97,6 @@ class Helper(test_utils.PatchHelper):
         self.open.return_value = self.fileobj
 
 
-class TestKeystoneSAMLMellonUtils(Helper):
-
-    def test_select_release(self):
-        self.kv.get.return_value = 'mitaka'
-        self.assertEqual(
-            keystone_saml_mellon.select_release(), 'mitaka')
-
-        self.kv.get.return_value = None
-        self.os_release.return_value = 'rocky'
-        self.assertEqual(
-            keystone_saml_mellon.select_release(), 'rocky')
-
-
 class TestKeystoneSAMLMellonConfigurationAdapter(Helper):
 
     def setUp(self):
@@ -120,12 +104,13 @@ class TestKeystoneSAMLMellonConfigurationAdapter(Helper):
         self.hostname = "keystone-sp.local"
         self.port = "5000"
         self.tls_enabled = True
-        self.unitdata_data = {
+        self.endpoint_data = {
             "hostname": self.hostname,
             "port": self.port,
             "tls-enabled": self.tls_enabled,
         }
-        self.kv.get.side_effect = FakeConfig(self.unitdata_data)
+        self.endpoint.all_joined_units.received.get.side_effect = (
+            FakeConfig(self.endpoint_data))
         self.base_url = "https://{}:{}".format(self.hostname, self.port)
 
     def test_validation_errors(self):
@@ -338,19 +323,20 @@ class TestKeystoneSAMLMellonCharm(Helper):
         self.sp_signing_keyinfo.__bool__.return_value = False
         self.assertFalse(ksm.configuration_complete())
 
-    def test_assess_status(self):
+    def test_custom_assess_status_check(self):
         ksm = keystone_saml_mellon.KeystoneSAMLMellonCharm()
-        ksm.assess_status()
-        self.application_version_set.asert_called_once_with()
-        self.status_set.assert_called_once_with("active", "Unit is ready")
+        self.assertEqual(
+            ksm.custom_assess_status_check(),
+            (None, None))
 
         # One option not ready
         self.status_set.reset_mock()
         self.sp_signing_keyinfo.__bool__.return_value = False
         ksm.options._validation_errors = {"idp-metadata": "malformed"}
-        ksm.assess_status()
-        self.status_set.assert_called_once_with(
-            "blocked", "Configuration is incomplete. idp-metadata: malformed")
+        self.assertEqual(
+            ksm.custom_assess_status_check(),
+            ("blocked",
+             "Configuration is incomplete. idp-metadata: malformed"))
 
     def test_render_config(self):
         ksm = keystone_saml_mellon.KeystoneSAMLMellonCharm()

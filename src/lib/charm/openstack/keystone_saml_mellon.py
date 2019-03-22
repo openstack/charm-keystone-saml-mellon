@@ -16,13 +16,15 @@
 import charmhelpers.core as core
 import charmhelpers.core.host as ch_host
 import charmhelpers.core.hookenv as hookenv
-import charmhelpers.core.unitdata as unitdata
 
 import charmhelpers.contrib.openstack.templating as os_templating
-import charmhelpers.contrib.openstack.utils as os_utils
 
 import charms_openstack.charm
 import charms_openstack.adapters
+
+from charms.reactive.relations import (
+    endpoint_from_flag,
+)
 
 import os
 import subprocess
@@ -30,14 +32,6 @@ import subprocess
 from lxml import etree
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-
-# release detection is done via keystone package given that
-# openstack-origin is not present in the subordinate charm
-# see https://github.com/juju/charm-helpers/issues/83
-from charms_openstack.charm.core import (
-    register_os_release_selector
-)
-OPENSTACK_RELEASE_KEY = 'charmers.openstack-release-version'
 
 CONFIGS = (IDP_METADATA, SP_METADATA, SP_PRIVATE_KEY,
            SP_LOCATION_CONFIG,) = [
@@ -48,20 +42,7 @@ CONFIGS = (IDP_METADATA, SP_METADATA, SP_PRIVATE_KEY,
                                 'sp-pk.{}.pem',
                                 'sp-location.{}.conf']]
 
-
-@register_os_release_selector
-def select_release():
-    """Determine the release based on the keystone package version.
-
-    Note that this function caches the release after the first install so
-    that it doesn't need to keep going and getting it from the package
-    information.
-    """
-    release_version = unitdata.kv().get(OPENSTACK_RELEASE_KEY, None)
-    if release_version is None:
-        release_version = os_utils.os_release('keystone')
-        unitdata.kv().set(OPENSTACK_RELEASE_KEY, release_version)
-    return release_version
+KEYSTONE_FID_ENDPOINT = "keystone-fid-service-provider.connected"
 
 
 class KeystoneSAMLMellonConfigurationAdapter(
@@ -73,6 +54,7 @@ class KeystoneSAMLMellonConfigurationAdapter(
         self._sp_private_key = None
         self._sp_signing_keyinfo = None
         self._validation_errors = {}
+        self._fid_data = self.get_fid_data()
 
     @property
     def validation_errors(self):
@@ -101,17 +83,24 @@ class KeystoneSAMLMellonConfigurationAdapter(
     def sp_location_config(self):
         return SP_LOCATION_CONFIG
 
+    def get_fid_data(self):
+        fid_sp = endpoint_from_flag(KEYSTONE_FID_ENDPOINT)
+        if fid_sp:
+            return fid_sp.all_joined_units.received
+        else:
+            return {}
+
     @property
     def keystone_host(self):
-        return unitdata.kv().get('hostname')
+        return self.get_fid_data().get("hostname")
 
     @property
     def keystone_port(self):
-        return unitdata.kv().get('port')
+        return self.get_fid_data().get("port")
 
     @property
     def tls_enabled(self):
-        return unitdata.kv().get('tls-enabled')
+        return self.get_fid_data().get("tls-enabled")
 
     @property
     def keystone_base_url(self):
@@ -256,6 +245,13 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
     # First release supported
     release = 'mitaka'
 
+    release_pkg = 'keystone-common'
+
+    # Required relations
+    required_relations = [
+        'keystone-fid-service-provider',
+        'websso-fid-service-provider']
+
     # List of packages to install for this charm
     packages = ['libapache2-mod-auth-mellon']
 
@@ -275,6 +271,13 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
     # ownership.
     group = 'www-data'
 
+    @property
+    def restart_map(self):
+        _map = {}
+        for config in CONFIGS:
+            _map[config] = []
+        return _map
+
     def configuration_complete(self):
         """Determine whether sufficient configuration has been provided
         via charm config options and resources.
@@ -292,19 +295,20 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
 
         return all(required_config.values())
 
-    def assess_status(self):
-        """Determine the current application status for the charm"""
-        hookenv.application_version_set(self.application_version)
+    def custom_assess_status_check(self):
+        """Custom asses status.
+
+        Check the configuration is complete.
+        """
         if not self.configuration_complete():
             errors = [
                 '{}: {}'.format(k, v)
                 for k, v in self.options.validation_errors.items() if v]
             status_msg = 'Configuration is incomplete. {}'.format(
                 ','.join(errors))
-            hookenv.status_set('blocked', status_msg)
-        else:
-            hookenv.status_set('active',
-                               'Unit is ready')
+            return 'blocked', status_msg
+        # Nothing to report
+        return None, None
 
     def render_config(self):
         """

@@ -34,26 +34,16 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'default_upgrade_charm': ('upgrade-charm',),
             },
             'when': {
+                'publish_sp_fid': (
+                    'keystone-fid-service-provider.connected',),
                 'render_config': (
-                    'endpoint.keystone-fid-service-provider.joined',
-                    'config.complete',
-                    'keystone-data.complete',),
-                'config_changed': (
-                    'endpoint.keystone-fid-service-provider.joined',),
-                'keystone_data_changed': (
-                    'endpoint.keystone-fid-service-provider.joined',),
+                    'keystone-fid-service-provider.available',),
                 'configure_websso': (
-                    'endpoint.websso-fid-service-provider.joined',
-                    'config.complete',
-                    'keystone-data.complete',
-                    'config.rendered',),
+                    'websso-fid-service-provider.connected',),
             },
             'when_not': {
-                'config_changed': ('config.complete',),
                 'keystone_departed': (
-                    'endpoint.keystone-fid-service-provider.joined',),
-                'keystone_data_changed': ('keystone-data.complete',),
-                'render_config': ('config.rendered',),
+                    'keystone-fid-service-provider.connected',),
                 'assess_status': ('always.run',),
             },
         }
@@ -75,16 +65,8 @@ class TestKeystoneSAMLMellonHandlers(test_utils.PatchHelper):
             self.keystone_saml_mellon_charm)
         self.provide_charm_instance().__exit__.return_value = None
 
-        self.patch_object(handlers, 'flags')
-
-        self.uuid = 'uuid-uuid'
-        self.patch_object(handlers.uuid, 'uuid4')
-        self.uuid4.return_value = self.uuid
-
-        self.patch_object(handlers, 'unitdata',
+        self.patch_object(handlers.reactive, 'any_file_changed',
                           new=mock.MagicMock())
-        self.kv = mock.MagicMock()
-        self.unitdata.kv.return_value = self.kv
 
         self.patch_object(handlers, 'endpoint_from_flag',
                           new=mock.MagicMock())
@@ -116,30 +98,25 @@ class TestKeystoneSAMLMellonHandlers(test_utils.PatchHelper):
         handlers.keystone_departed()
         self.keystone_saml_mellon_charm.remove_config.assert_called_once_with()
 
-    def test_keystone_data_changed(self):
-        kv_set_calls = [
-            mock.call("tls-enabled", True),
-            mock.call("port", "5000"),
-            mock.call("hostname", "keystone-0"),
-        ]
-
-        handlers.keystone_data_changed(self.endpoint)
-
-        self.kv.set.has_calls(kv_set_calls)
-        self.flags.set_flag.assert_called_once_with('keystone-data.complete')
+    def test_publish_sp_fid(self):
+        handlers.publish_sp_fid()
+        self.endpoint.publish.assert_called_once_with(
+            self.protocol_name, self.remote_id_attribute)
 
     def test_render_config(self):
+        # No restart
+        self.any_file_changed.return_value = False
+        (self.keystone_saml_mellon_charm
+            .configuration_complete.return_value) = True
+
         handlers.render_config()
         self.keystone_saml_mellon_charm.render_config.assert_called_once_with()
-        self.flags.set_flag.assert_called_once_with('config.rendered')
-        self.endpoint.publish.assert_called_once_with(
-            self.uuid, self.protocol_name, self.remote_id_attribute)
+        self.endpoint.request_restart.assert_not_called()
 
-    def test_config_changed(self):
-        handlers.config_changed()
-        (self.keystone_saml_mellon_charm.configuration_complete
-            .return_value) = True
-        self.flags.set_flag.assert_called_once_with('config.complete')
+        # Restart
+        self.any_file_changed.return_value = True
+        handlers.render_config()
+        self.endpoint.request_restart.assert_called_once_with()
 
     def test_configure_websso(self):
         handlers.configure_websso()
