@@ -40,30 +40,27 @@ def keystone_departed():
 
 
 @reactive.when('keystone-fid-service-provider.connected')
-def publish_sp_fid():
+def publish_sp_fid(fid_sp):
     # don't always have a relation context - obtain from the flag
-    fid_sp = endpoint_from_flag(
-        keystone_saml_mellon.KEYSTONE_FID_ENDPOINT)
+    #fid_sp = endpoint_from_flag(
+    #    keystone_saml_mellon.KEYSTONE_FID_ENDPOINT)
     with charm.provide_charm_instance() as charm_instance:
         fid_sp.publish(charm_instance.options.protocol_name,
                        charm_instance.options.remote_id_attribute)
 
 
 @reactive.when('keystone-fid-service-provider.available')
-def render_config():
+def render_config(fid_sp):
     # don't always have a relation context - obtain from the flag
-    fid_sp = endpoint_from_flag(
-        keystone_saml_mellon.KEYSTONE_FID_ENDPOINT)
+    #fid_sp = endpoint_from_flag(
+    #    keystone_saml_mellon.KEYSTONE_FID_ENDPOINT)
     with charm.provide_charm_instance() as charm_instance:
         if charm_instance.configuration_complete():
-            print("COMPLETE")
-            charm_instance.render_config()
+            charm_instance.render_config(fid_sp)
             # Trigger keystone restart. The relation is container-scoped
             # so a per-unit db of a remote unit will only contain a nonce
             # of a single subordinate
-            print("CHECK_anyfile")
             if reactive.any_file_changed(keystone_saml_mellon.CONFIGS):
-                print("TRUE_anyfile")
                 fid_sp.request_restart()
 
 

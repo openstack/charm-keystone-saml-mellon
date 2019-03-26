@@ -1,5 +1,5 @@
 <EntityDescriptor
-	entityID="{{ options.sp_auth_url }}"
+	entityID="{{ keystone_fid_service_provider.base_url }}{{ options.sp_auth_path }}"
 	xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
 	xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 	<SPSSODescriptor
@@ -14,10 +14,10 @@
 			{{ options.sp_signing_keyinfo }}
 		</KeyDescriptor>
 		{% endif %}
-		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="{{ options.sp_logout_url }}"/>
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="{{ keystone_fid_service_provider.base_url }}{{ options.sp_logout_path }}"/>
 		{% for format in options.supported_nameid_formats -%}
 		<NameIDFormat>{{ format }}</NameIDFormat>
 		{% endfor -%}
-		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ options.sp_post_response_url }}" isDefault="true" index="0"/>
+		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ keystone_fid_service_provider.base_url }}{{ options.sp_post_response_path }}" isDefault="true" index="0"/>
 	</SPSSODescriptor>
 </EntityDescriptor>

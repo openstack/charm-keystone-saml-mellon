@@ -54,7 +54,6 @@ class KeystoneSAMLMellonConfigurationAdapter(
         self._sp_private_key = None
         self._sp_signing_keyinfo = None
         self._validation_errors = {}
-        self._fid_data = self.get_fid_data()
 
     @property
     def validation_errors(self):
@@ -82,31 +81,6 @@ class KeystoneSAMLMellonConfigurationAdapter(
     @property
     def sp_location_config(self):
         return SP_LOCATION_CONFIG
-
-    def get_fid_data(self):
-        fid_sp = endpoint_from_flag(KEYSTONE_FID_ENDPOINT)
-        if fid_sp:
-            return fid_sp.all_joined_units.received
-        else:
-            return {}
-
-    @property
-    def keystone_host(self):
-        return self.get_fid_data().get("hostname")
-
-    @property
-    def keystone_port(self):
-        return self.get_fid_data().get("port")
-
-    @property
-    def tls_enabled(self):
-        return self.get_fid_data().get("tls-enabled")
-
-    @property
-    def keystone_base_url(self):
-        scheme = 'https' if self.tls_enabled else 'http'
-        return ('{}://{}:{}'.format(scheme, self.keystone_host,
-                                    self.keystone_port))
 
     @property
     def sp_idp_path(self):
@@ -146,21 +120,6 @@ class KeystoneSAMLMellonConfigurationAdapter(
     @property
     def sp_logout_path(self):
         return '{}/logout'.format(self.mellon_endpoint_path)
-
-    @property
-    def sp_auth_url(self):
-        return '{}{}'.format(self.keystone_base_url,
-                             self.sp_auth_path)
-
-    @property
-    def sp_logout_url(self):
-        return '{}{}'.format(self.keystone_base_url,
-                             self.sp_logout_path)
-
-    @property
-    def sp_post_response_url(self):
-        return '{}{}'.format(self.keystone_base_url,
-                             self.sp_post_response_path)
 
     @property
     def mellon_subject_confirmation_data_address_check(self):
@@ -310,7 +269,7 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         # Nothing to report
         return None, None
 
-    def render_config(self):
+    def render_config(self, *args):
         """
         Render Service Provider configuration file to be used by Apache
         and provided to idP out of band to establish mutual trust.
@@ -327,14 +286,23 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         # ensure that a directory we need is there
         ch_host.mkdir('/etc/apache2/mellon', perms=dperms, owner=owner,
                       group=group)
+        _template_map = {
+            os.path.basename(self.options.sp_metadata_file): 'mellon-sp-metadata.xml',
+            os.path.basename(self.options.sp_location_config): 'apache-mellon-location.conf',
+        }
+        # idp-metadata.xml and sp-private-key are rendered purely from resources
+        #self.render_with_interfaces(args, template_map=_template_map)
         self.render_configs(self.string_templates.keys())
 
+        # For now the template name does not match the basename(file_name)
+        # So not using self.render_with_interfaces(args)
+        # TODO: Make a mapping mechanism between target and source templates
         core.templating.render(
             source='mellon-sp-metadata.xml',
             template_loader=os_templating.get_loader(
                 'templates/', self.release),
             target=self.options.sp_metadata_file,
-            context=self.adapters_instance,
+            context=self.adapters_class(args, charm_instance=self),
             owner=owner,
             group=group,
             perms=fileperms
@@ -345,7 +313,7 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
             template_loader=os_templating.get_loader(
                 'templates/', self.release),
             target=self.options.sp_location_config,
-            context=self.adapters_instance,
+            context=self.adapters_class(args, charm_instance=self),
             owner=owner,
             group=group,
             perms=fileperms
