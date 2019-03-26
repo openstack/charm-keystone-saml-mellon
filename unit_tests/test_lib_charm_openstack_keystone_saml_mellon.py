@@ -45,10 +45,7 @@ class Helper(test_utils.PatchHelper):
         self.patch_release(
             keystone_saml_mellon.KeystoneSAMLMellonCharm.release)
 
-        self.patch_object(keystone_saml_mellon, 'endpoint_from_flag',
-                          new=mock.MagicMock())
         self.endpoint = mock.MagicMock()
-        self.endpoint_from_flag.return_value = self.endpoint
 
         self.idp_name = "samltest"
         self.protocol_name = "mapped"
@@ -138,22 +135,6 @@ class TestKeystoneSAMLMellonConfigurationAdapter(Helper):
         self.assertEqual(
             ksmca.sp_private_key_file, keystone_saml_mellon.SP_PRIVATE_KEY)
 
-    def test_keystone_host(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(ksmca.keystone_host, self.hostname)
-
-    def test_keystone_port(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(ksmca.keystone_port, self.port)
-
-    def test_keystone_tls_enabled(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(ksmca.tls_enabled, self.tls_enabled)
-
-    def test_keystone_base_url(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(ksmca.keystone_base_url, self.base_url)
-
     def test_sp_idp_path(self):
         ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
         self.assertEqual(
@@ -194,25 +175,6 @@ class TestKeystoneSAMLMellonConfigurationAdapter(Helper):
         self.assertEqual(
             ksmca.sp_logout_path,
             '{}/logout'.format(ksmca.mellon_endpoint_path))
-
-    def test_sp_auth_url(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(
-            ksmca.sp_auth_url,
-            '{}{}'.format(ksmca.keystone_base_url, ksmca.sp_auth_path))
-
-    def test_sp_logout_url(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(
-            ksmca.sp_logout_url,
-            '{}{}'.format(ksmca.keystone_base_url, ksmca.sp_logout_path))
-
-    def test_sp_post_response_url(self):
-        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
-        self.assertEqual(
-            ksmca.sp_post_response_url,
-            '{}{}'.format(ksmca.keystone_base_url,
-                          ksmca.sp_post_response_path))
 
     def test_mellon_subject_confirmation_data_address_check(self):
         ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()

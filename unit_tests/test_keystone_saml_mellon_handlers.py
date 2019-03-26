@@ -68,10 +68,7 @@ class TestKeystoneSAMLMellonHandlers(test_utils.PatchHelper):
         self.patch_object(handlers.reactive, 'any_file_changed',
                           new=mock.MagicMock())
 
-        self.patch_object(handlers, 'endpoint_from_flag',
-                          new=mock.MagicMock())
         self.endpoint = mock.MagicMock()
-        self.endpoint_from_flag.return_value = self.endpoint
 
         self.protocol_name = "mapped"
         self.remote_id_attribute = "https://samltest.id"
@@ -99,7 +96,7 @@ class TestKeystoneSAMLMellonHandlers(test_utils.PatchHelper):
         self.keystone_saml_mellon_charm.remove_config.assert_called_once_with()
 
     def test_publish_sp_fid(self):
-        handlers.publish_sp_fid()
+        handlers.publish_sp_fid(self.endpoint)
         self.endpoint.publish.assert_called_once_with(
             self.protocol_name, self.remote_id_attribute)
 
@@ -109,17 +106,18 @@ class TestKeystoneSAMLMellonHandlers(test_utils.PatchHelper):
         (self.keystone_saml_mellon_charm
             .configuration_complete.return_value) = True
 
-        handlers.render_config()
-        self.keystone_saml_mellon_charm.render_config.assert_called_once_with()
+        handlers.render_config(self.endpoint)
+        self.keystone_saml_mellon_charm.render_config.assert_called_once_with(
+            self.endpoint)
         self.endpoint.request_restart.assert_not_called()
 
         # Restart
         self.any_file_changed.return_value = True
-        handlers.render_config()
+        handlers.render_config(self.endpoint)
         self.endpoint.request_restart.assert_called_once_with()
 
     def test_configure_websso(self):
-        handlers.configure_websso()
+        handlers.configure_websso(self.endpoint)
         self.endpoint.publish.assert_called_once_with(
             self.protocol_name, self.idp_name, self.user_facing_name)
 

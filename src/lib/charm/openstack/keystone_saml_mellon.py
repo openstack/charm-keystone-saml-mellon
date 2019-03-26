@@ -22,10 +22,6 @@ import charmhelpers.contrib.openstack.templating as os_templating
 import charms_openstack.charm
 import charms_openstack.adapters
 
-from charms.reactive.relations import (
-    endpoint_from_flag,
-)
-
 import os
 import subprocess
 
@@ -41,8 +37,6 @@ CONFIGS = (IDP_METADATA, SP_METADATA, SP_PRIVATE_KEY,
                                 'sp-meta.{}.xml',
                                 'sp-pk.{}.pem',
                                 'sp-location.{}.conf']]
-
-KEYSTONE_FID_ENDPOINT = "keystone-fid-service-provider.connected"
 
 
 class KeystoneSAMLMellonConfigurationAdapter(
@@ -230,12 +224,12 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
     # ownership.
     group = 'www-data'
 
-    @property
-    def restart_map(self):
-        _map = {}
-        for config in CONFIGS:
-            _map[config] = []
-        return _map
+    restart_map = {
+        IDP_METADATA: [],
+        SP_METADATA: [],
+        SP_PRIVATE_KEY: [],
+        SP_LOCATION_CONFIG: [],
+    }
 
     def configuration_complete(self):
         """Determine whether sufficient configuration has been provided
@@ -286,17 +280,15 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         # ensure that a directory we need is there
         ch_host.mkdir('/etc/apache2/mellon', perms=dperms, owner=owner,
                       group=group)
-        _template_map = {
-            os.path.basename(self.options.sp_metadata_file): 'mellon-sp-metadata.xml',
-            os.path.basename(self.options.sp_location_config): 'apache-mellon-location.conf',
-        }
-        # idp-metadata.xml and sp-private-key are rendered purely from resources
-        #self.render_with_interfaces(args, template_map=_template_map)
+
         self.render_configs(self.string_templates.keys())
 
-        # For now the template name does not match the basename(file_name)
-        # So not using self.render_with_interfaces(args)
+        # For now the template name does not match
+        # basename(file_path/file_name). This is necessary to enable multiple
+        # instantiations of keystone-saml-mellon using service_name() in the
+        # file names. So not using self.render_with_interfaces(args)
         # TODO: Make a mapping mechanism between target and source templates
+        # in charms.openstack
         core.templating.render(
             source='mellon-sp-metadata.xml',
             template_loader=os_templating.get_loader(
@@ -320,7 +312,7 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         )
 
     def remove_config(self):
-        for f in CONFIGS:
+        for f in self.restart_map.keys():
             if os.path.exists(f):
                 os.unlink(f)
 
