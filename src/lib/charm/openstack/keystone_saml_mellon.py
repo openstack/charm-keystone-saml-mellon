@@ -256,7 +256,7 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         if not self.configuration_complete():
             errors = [
                 '{}: {}'.format(k, v)
-                for k, v in self.options.validation_errors.items() if v]
+                for k, v in self.options.validation_errors.items()]
             status_msg = 'Configuration is incomplete. {}'.format(
                 ','.join(errors))
             return 'blocked', status_msg
