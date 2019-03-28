@@ -47,6 +47,7 @@ In a bundle:
           idp-name: 'samltest'
           protocol-name: 'mapped'
           user-facing-name: "samltest.id'
+          nameid-formats="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
         resources:
           idp-metadata: "./idp-metadata.xml"
           sp-signing-keyinfo: "./sp-keyinfo.xml"

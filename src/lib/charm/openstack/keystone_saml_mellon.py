@@ -16,10 +16,8 @@
 import charmhelpers.core as core
 import charmhelpers.core.host as ch_host
 import charmhelpers.core.hookenv as hookenv
-import charmhelpers.core.unitdata as unitdata
 
 import charmhelpers.contrib.openstack.templating as os_templating
-import charmhelpers.contrib.openstack.utils as os_utils
 
 import charms_openstack.charm
 import charms_openstack.adapters
@@ -31,14 +29,6 @@ from lxml import etree
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
-# release detection is done via keystone package given that
-# openstack-origin is not present in the subordinate charm
-# see https://github.com/juju/charm-helpers/issues/83
-from charms_openstack.charm.core import (
-    register_os_release_selector
-)
-OPENSTACK_RELEASE_KEY = 'charmers.openstack-release-version'
-
 CONFIGS = (IDP_METADATA, SP_METADATA, SP_PRIVATE_KEY,
            SP_LOCATION_CONFIG,) = [
                os.path.join('/etc/apache2/mellon',
@@ -47,21 +37,6 @@ CONFIGS = (IDP_METADATA, SP_METADATA, SP_PRIVATE_KEY,
                                 'sp-meta.{}.xml',
                                 'sp-pk.{}.pem',
                                 'sp-location.{}.conf']]
-
-
-@register_os_release_selector
-def select_release():
-    """Determine the release based on the keystone package version.
-
-    Note that this function caches the release after the first install so
-    that it doesn't need to keep going and getting it from the package
-    information.
-    """
-    release_version = unitdata.kv().get(OPENSTACK_RELEASE_KEY, None)
-    if release_version is None:
-        release_version = os_utils.os_release('keystone')
-        unitdata.kv().set(OPENSTACK_RELEASE_KEY, release_version)
-    return release_version
 
 
 class KeystoneSAMLMellonConfigurationAdapter(
@@ -102,24 +77,6 @@ class KeystoneSAMLMellonConfigurationAdapter(
         return SP_LOCATION_CONFIG
 
     @property
-    def keystone_host(self):
-        return unitdata.kv().get('hostname')
-
-    @property
-    def keystone_port(self):
-        return unitdata.kv().get('port')
-
-    @property
-    def tls_enabled(self):
-        return unitdata.kv().get('tls-enabled')
-
-    @property
-    def keystone_base_url(self):
-        scheme = 'https' if self.tls_enabled else 'http'
-        return ('{}://{}:{}'.format(scheme, self.keystone_host,
-                                    self.keystone_port))
-
-    @property
     def sp_idp_path(self):
         return ('/v3/OS-FEDERATION/identity_providers/{}'
                 .format(self.idp_name))
@@ -157,21 +114,6 @@ class KeystoneSAMLMellonConfigurationAdapter(
     @property
     def sp_logout_path(self):
         return '{}/logout'.format(self.mellon_endpoint_path)
-
-    @property
-    def sp_auth_url(self):
-        return '{}{}'.format(self.keystone_base_url,
-                             self.sp_auth_path)
-
-    @property
-    def sp_logout_url(self):
-        return '{}{}'.format(self.keystone_base_url,
-                             self.sp_logout_path)
-
-    @property
-    def sp_post_response_url(self):
-        return '{}{}'.format(self.keystone_base_url,
-                             self.sp_post_response_path)
 
     @property
     def mellon_subject_confirmation_data_address_check(self):
@@ -256,6 +198,13 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
     # First release supported
     release = 'mitaka'
 
+    release_pkg = 'keystone-common'
+
+    # Required relations
+    required_relations = [
+        'keystone-fid-service-provider',
+        'websso-fid-service-provider']
+
     # List of packages to install for this charm
     packages = ['libapache2-mod-auth-mellon']
 
@@ -275,6 +224,13 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
     # ownership.
     group = 'www-data'
 
+    restart_map = {
+        IDP_METADATA: [],
+        SP_METADATA: [],
+        SP_PRIVATE_KEY: [],
+        SP_LOCATION_CONFIG: [],
+    }
+
     def configuration_complete(self):
         """Determine whether sufficient configuration has been provided
         via charm config options and resources.
@@ -292,21 +248,22 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
 
         return all(required_config.values())
 
-    def assess_status(self):
-        """Determine the current application status for the charm"""
-        hookenv.application_version_set(self.application_version)
+    def custom_assess_status_check(self):
+        """Custom asses status.
+
+        Check the configuration is complete.
+        """
         if not self.configuration_complete():
             errors = [
                 '{}: {}'.format(k, v)
-                for k, v in self.options.validation_errors.items() if v]
+                for k, v in self.options.validation_errors.items()]
             status_msg = 'Configuration is incomplete. {}'.format(
                 ','.join(errors))
-            hookenv.status_set('blocked', status_msg)
-        else:
-            hookenv.status_set('active',
-                               'Unit is ready')
+            return 'blocked', status_msg
+        # Nothing to report
+        return None, None
 
-    def render_config(self):
+    def render_config(self, *args):
         """
         Render Service Provider configuration file to be used by Apache
         and provided to idP out of band to establish mutual trust.
@@ -323,14 +280,21 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
         # ensure that a directory we need is there
         ch_host.mkdir('/etc/apache2/mellon', perms=dperms, owner=owner,
                       group=group)
+
         self.render_configs(self.string_templates.keys())
 
+        # For now the template name does not match
+        # basename(file_path/file_name). This is necessary to enable multiple
+        # instantiations of keystone-saml-mellon using service_name() in the
+        # file names. So not using self.render_with_interfaces(args)
+        # TODO: Make a mapping mechanism between target and source templates
+        # in charms.openstack
         core.templating.render(
             source='mellon-sp-metadata.xml',
             template_loader=os_templating.get_loader(
                 'templates/', self.release),
             target=self.options.sp_metadata_file,
-            context=self.adapters_instance,
+            context=self.adapters_class(args, charm_instance=self),
             owner=owner,
             group=group,
             perms=fileperms
@@ -341,14 +305,14 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
             template_loader=os_templating.get_loader(
                 'templates/', self.release),
             target=self.options.sp_location_config,
-            context=self.adapters_instance,
+            context=self.adapters_class(args, charm_instance=self),
             owner=owner,
             group=group,
             perms=fileperms
         )
 
     def remove_config(self):
-        for f in CONFIGS:
+        for f in self.restart_map.keys():
             if os.path.exists(f):
                 os.unlink(f)
 
