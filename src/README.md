@@ -210,6 +210,18 @@ example group membership.
 See [mapping documentation](https://docs.openstack.org/keystone/latest/admin/federation/mapping_combinations.html) upstream.
 
 ```
+    openstack domain create federated_domain
+    openstack group create federated_users --domain federated_domain
+    # Get the federated_users group id and assign the role Member
+    GROUP_ID=$(openstack group show federated_users --domain federated_domain | grep -v domain_id | grep id |awk '{print $4}')
+    openstack role add --group ${GROUP_ID} --domain federated_domain Member
+
+    # Use the URL for your idP's metadata for remote-id. The name can be
+    # arbitrary.
+    openstack identity provider create --remote-id https://samltest.id/saml/idp --domain federated_domain samltest 
+
+    # Get the federated_domain id and add it to the rules.json map
+    DOMAIN_ID=$(openstack domain show federated_domain |grep id |awk '{print $4}')
     cat > rules.json <<EOF
     [{
             "local": [
@@ -219,7 +231,7 @@ See [mapping documentation](https://docs.openstack.org/keystone/latest/admin/fed
                     },
                     "group": {
                         "domain": {
-                            "name": "federated_domain"
+                            "id": "${DOMAIN_ID}"
                         },
                         "name": "federated_users"
                     },
@@ -242,14 +254,7 @@ See [mapping documentation](https://docs.openstack.org/keystone/latest/admin/fed
             ]
     }]
     EOF
-    openstack domain create federated_domain
-    openstack project create federated_project --domain federated_domain
-    openstack group create federated_users --domain federated_domain
-    # created group id: 0427a780b34441488f064526a9890edd
-    openstack role add --group 0427a780b34441488f064526a9890edd --domain federated_domain Member
-    # Use the URL for your idP's metadata for remote-id. The name can be
-    # arbitrary.
-    openstack identity provider create --remote-id https://samltest.id/saml/idp samltest
+
     # Use the rules.json created above.
     openstack mapping create --rules rules.json samltest_mapping
     # The name should be mapped or saml here and must match the configuration
