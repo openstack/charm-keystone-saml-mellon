@@ -1,14 +1,20 @@
 charm_name: keystone-saml-mellon
 smoke_bundles:
-- bionic-queens-smoke
+- bionic-queens
 gate_bundles:
 - bionic-queens
 - bionic-queens-ha
 configure:
 - zaza.charm_tests.vault.setup.auto_inititialize
+- zaza.charm_tests.saml_mellon.setup.attach_saml_resources
 - zaza.charm_tests.keystone.setup.add_demo_user
 - zaza.charm_tests.glance.setup.add_lts_image
+- zaza.charm_tests.nova.setup.create_flavors
+- zaza.charm_tests.nova.setup.manage_ssh_key
+- zaza.charm_tests.neutron.setup.basic_overcloud_network
+- zaza.charm_tests.saml_mellon.setup.keystone_federation_setup
 tests:
+- zaza.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonTest
 - zaza.charm_tests.keystone.tests.AuthenticationAuthorizationTest
 target_deploy_status:
   ntp:
