@@ -15,9 +15,11 @@
 		</KeyDescriptor>
 		{% endif %}
 		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="{{ keystone_fid_service_provider.base_url }}{{ options.sp_logout_path }}"/>
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="{{ keystone_fid_service_provider.base_url }}{{ options.sp_logout_path }}"/>
 		{% for format in options.supported_nameid_formats -%}
 		<NameIDFormat>{{ format }}</NameIDFormat>
 		{% endfor -%}
 		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="{{ keystone_fid_service_provider.base_url }}{{ options.sp_post_response_path }}" isDefault="true" index="0"/>
+		<AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS" Location="{{ keystone_fid_service_provider.base_url }}{{ options.sp_paos_response_path }}" index="1"/>
 	</SPSSODescriptor>
 </EntityDescriptor>

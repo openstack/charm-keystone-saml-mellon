@@ -112,6 +112,10 @@ class KeystoneSAMLMellonConfigurationAdapter(
         return '{}/postResponse'.format(self.mellon_endpoint_path)
 
     @property
+    def sp_paos_response_path(self):
+        return '{}/paosResponse'.format(self.mellon_endpoint_path)
+
+    @property
     def sp_logout_path(self):
         return '{}/logout'.format(self.mellon_endpoint_path)
 
