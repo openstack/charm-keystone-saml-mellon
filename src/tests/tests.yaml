@@ -5,7 +5,7 @@ gate_bundles:
 - bionic-queens
 - bionic-queens-ha
 configure:
-- zaza.openstack.charm_tests.vault.setup.auto_inititialize
+- zaza.openstack.charm_tests.vault.setup.auto_initialize
 - zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources
 - zaza.openstack.charm_tests.keystone.setup.add_demo_user
 - zaza.openstack.charm_tests.glance.setup.add_lts_image

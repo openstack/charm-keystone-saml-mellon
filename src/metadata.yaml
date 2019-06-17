@@ -63,7 +63,7 @@ resources:
       This fragment should contain a certificate that contains a public
       key of a Service Provider in case an idP requires that SAML
       requests are signed.
-      The term “signing certificate” is a misnomer. A signing
+      The term "signing certificate" is a misnomer. A signing
       certificate in metadata is actually used for signature
       verification, not signing. The private signing key is held
       securely by the signing party (SP in this case). In a SAML
