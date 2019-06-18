@@ -28,6 +28,7 @@ class TestKeystoneSAMLMellonActions(test_utils.PatchHelper):
         super().setUp()
         self.patch_object(actions.hookenv, 'action_set')
         self.patch_object(actions.hookenv, 'action_fail')
+        self.patch_object(actions.hookenv, 'service_name')
         self.patch_object(actions, "os")
 
         self.patch(
@@ -38,6 +39,9 @@ class TestKeystoneSAMLMellonActions(test_utils.PatchHelper):
         self.open.return_value = self.fileobj
 
     def test_get_sp_metadata(self):
+        service_name = 'keystone-foobar-mellon'
+        self.service_name.return_value = service_name
+
         # Valid XML
         self.sp_metadata_xml = (
             "<?xml version='1.0' encoding='UTF-8'?>"
@@ -46,7 +50,8 @@ class TestKeystoneSAMLMellonActions(test_utils.PatchHelper):
             "</ds:X509Data> </ds:KeyInfo>")
         self.file.readlines.return_value = self.sp_metadata_xml
         self.metadata_file = ("/etc/apache2/mellon/"
-                              "sp-meta.keystone-saml-mellon.xml")
+                              "sp-meta.{}.xml".format(
+                                  service_name))
 
         # File Does not exist
         self.os.path.exists.return_value = False

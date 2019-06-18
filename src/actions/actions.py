@@ -18,10 +18,9 @@ import sys
 import charmhelpers.core.hookenv as hookenv
 
 
-SP_METADATA_FILE = "/etc/apache2/mellon/sp-meta.keystone-saml-mellon.xml"
-
-
 def get_sp_metadata(*args):
+    SP_METADATA_FILE = "/etc/apache2/mellon/sp-meta.{}.xml".format(
+        hookenv.service_name())
     if not os.path.exists(SP_METADATA_FILE):
         return hookenv.action_fail(
             "The SP metadata file {} does not exist"
