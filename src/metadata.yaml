@@ -25,6 +25,7 @@ tags:
 series:
   - xenial
   - bionic
+  - eoan
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
