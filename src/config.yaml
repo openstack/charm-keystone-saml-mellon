@@ -62,3 +62,10 @@ options:
     description: |
       Indicates a requirement for the <saml:Assertion> elements received
       by this service provider to be signed.
+  idp-discovery-service-url:
+    type: string
+    default:
+    description: |
+      IDP discovery service URL. If set to "" (default) no discovery
+      service will be used. If used, the resource "idp-metadata" must
+      be an XML file containing descriptors for multiple IDPs
