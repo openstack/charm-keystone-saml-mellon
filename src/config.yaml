@@ -69,3 +69,10 @@ options:
       IDP discovery service URL. If set to "" (default) no discovery
       service will be used. If used, the resource "idp-metadata" must
       be an XML file containing descriptors for multiple IDPs
+  idp-metadata-url:
+    type: string
+    default:
+    description: |
+      An optional URL to retrieve IDP metadata from. If set, takes priority
+      over the "idp-metadata" resource. Auto-updates of metadata occur during
+      any hook execution, including update-status.
