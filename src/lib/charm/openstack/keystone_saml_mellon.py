@@ -135,7 +135,7 @@ class KeystoneSAMLMellonConfigurationAdapter(
     def idp_metadata(self):
         idp_metadata_path = hookenv.resource_get('idp-metadata')
         if os.path.exists(idp_metadata_path) and not self._idp_metadata:
-            with open(idp_metadata_path) as f:
+            with open(idp_metadata_path, encoding="utf-8") as f:
                 content = f.read()
                 try:
                     etree.fromstring(content.encode())
