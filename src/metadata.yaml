@@ -26,6 +26,7 @@ series:
   - xenial
   - bionic
   - eoan
+  - focal
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
