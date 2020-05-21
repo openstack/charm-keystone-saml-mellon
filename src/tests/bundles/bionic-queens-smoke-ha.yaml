@@ -25,11 +25,11 @@ relations:
 applications:
   mysql:
     constraints: mem=3072M
-    charm: cs:~openstack-charmers-next/percona-cluster
+    charm: cs:~openstack-charmers/percona-cluster
     num_units: 1
   keystone:
     series: bionic
-    charm: cs:~openstack-charmers-next/keystone
+    charm: cs:~openstack-charmers/keystone
     num_units: 1
     options:
       token-provider: 'fernet'
@@ -49,11 +49,11 @@ applications:
       sp-signing-keyinfo: "./sp-signing-keyinfo.xml"
       sp-private-key: "./sp-private-key.pem"
   glance:
-    charm: cs:~openstack-charmers-next/glance
+    charm: cs:~openstack-charmers/glance
     num_units: 1
   vault:
     num_units: 1
-    charm: cs:~openstack-charmers-next/vault
+    charm: cs:~openstack-charmers/vault
   openstack-dashboard:
     num_units: 1
-    charm: cs:~openstack-charmers-next/openstack-dashboard
+    charm: cs:~openstack-charmers/openstack-dashboard

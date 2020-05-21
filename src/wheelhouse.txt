@@ -3,3 +3,5 @@ lxml
 
 jinja2
 psutil
+
+git+https://opendev.org/openstack/charms.openstack.git@stable/20.05#egg=charms.openstack
