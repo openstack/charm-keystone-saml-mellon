@@ -1,9 +1,12 @@
 charm_name: keystone-saml-mellon
+
 smoke_bundles:
-- bionic-queens
+- bionic-queens-smoke-ha
+
 gate_bundles:
-- bionic-queens
 - bionic-queens-ha
+- focal-ussuri-ha
+
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
 - zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources
@@ -13,9 +16,11 @@ configure:
 - zaza.openstack.charm_tests.nova.setup.manage_ssh_key
 - zaza.openstack.charm_tests.neutron.setup.basic_overcloud_network
 - zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup
+
 tests:
 - zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonTest
 - zaza.openstack.charm_tests.keystone.tests.AuthenticationAuthorizationTest
+
 target_deploy_status:
   ntp:
     workload-status: active
@@ -26,3 +31,7 @@ target_deploy_status:
   keystone-saml-mellon:
     workload-status: blocked
     workload-status-message: "Configuration is incomplete. idp-metadata: idp-metadata resource is not a well-formed xml file"
+
+tests_options:
+  force_deploy:
+    - focal-ussuri-ha
