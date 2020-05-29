@@ -1,7 +1,7 @@
 charm_name: keystone-saml-mellon
 
 smoke_bundles:
-- bionic-queens-smoke-ha
+- bionic-queens-ha
 
 gate_bundles:
 - bionic-queens-ha
