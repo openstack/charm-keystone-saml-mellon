@@ -2,31 +2,29 @@ name: keystone-saml-mellon
 subordinate: true
 maintainer: OpenStack Charmers <openstack-charmers@lists.ubuntu.com>
 summary: Federated identity with SAML via Mellon Service Provider
-description:
-  The main goal of this charm is to generate the necessary configuration
-  for use in the Keystone charm related to Service Provider config
-  generation, trust establishment between a remote idP and SP via
-  certificates and signaling Keystone service restart.
-  Keystone has a concept of a federated backend which serves multiple
-  purposes including being a backend part of a Service Provider in an
-  authentication scenario where SAML is used. Unless ECP is used on a
-  keystone client side, SAML-related exchange is performed in an Apache
-  authentication module (Mellon in case of this charm) and SAML
-  assertions are converted to WSGI environment variables passed down to
-  a particular mod_wsgi interpreter running Keystone code. Keystone has
-  an authentication plug-in called "mapped" which does the rest of the
-  work of resolving symbolic attributes and using them in mappings
-  defined by an operator or validating the existence of referenced IDs.
+description: The main goal of this charm is to generate the necessary configuration
+  for use in the Keystone charm related to Service Provider config generation, trust
+  establishment between a remote idP and SP via certificates and signaling Keystone
+  service restart. Keystone has a concept of a federated backend which serves multiple
+  purposes including being a backend part of a Service Provider in an authentication
+  scenario where SAML is used. Unless ECP is used on a keystone client side, SAML-related
+  exchange is performed in an Apache authentication module (Mellon in case of this
+  charm) and SAML assertions are converted to WSGI environment variables passed down
+  to a particular mod_wsgi interpreter running Keystone code. Keystone has an authentication
+  plug-in called "mapped" which does the rest of the work of resolving symbolic attributes
+  and using them in mappings defined by an operator or validating the existence of
+  referenced IDs.
 tags:
-  - openstack
-  - identity
-  - federation
-  - idP
+- openstack
+- identity
+- federation
+- idP
 series:
-  - xenial
-  - bionic
-  - eoan
-  - focal
+- xenial
+- bionic
+- eoan
+- focal
+- groovy
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
@@ -41,7 +39,7 @@ requires:
 resources:
   idp-metadata:
     type: file
-    filename: 'idp-metadata.xml'
+    filename: idp-metadata.xml
     description: |
       Identity Provider metadata XML file that conforms to
       saml-metadata-2.0-os specification. This file contains idP
@@ -51,13 +49,13 @@ resources:
       service provider side to interact with that idP.
   sp-private-key:
     type: file
-    filename: 'sp-private-key.pem'
+    filename: sp-private-key.pem
     description: |
       Private key used by Service Provider (mod_auth_mellon) to sign
       and/or SAML-level (not transport-level) encryption.
   sp-signing-keyinfo:
     type: file
-    filename: 'sp-signing-keyinfo.xml'
+    filename: sp-signing-keyinfo.xml
     description: |
       Specifies a signing KeyInfo portion of SPSSODescriptor to be used
       in Service Provider metadata. This should be an XML portion
