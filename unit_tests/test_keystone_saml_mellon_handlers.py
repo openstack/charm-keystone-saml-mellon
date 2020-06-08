@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
+from unittest import mock
 
 import charm.openstack.keystone_saml_mellon as keystone_saml_mellon
 import reactive.keystone_saml_mellon_handlers as handlers

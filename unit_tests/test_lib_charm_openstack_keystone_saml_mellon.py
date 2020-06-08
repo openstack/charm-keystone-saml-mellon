@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import mock
 import urllib.error
+from unittest import mock
 
 import charms_openstack.test_utils as test_utils
 
