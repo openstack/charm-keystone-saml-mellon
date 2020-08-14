@@ -7,6 +7,10 @@ gate_bundles:
 - bionic-queens-ha
 - focal-ussuri-ha
 
+dev_bundles:
+- focal-victoria-ha
+- groovy-victoria-ha
+
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
 - zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources
@@ -34,4 +38,4 @@ target_deploy_status:
 
 tests_options:
   force_deploy:
-    - focal-ussuri-ha
+    - groovy-victoria-ha
