@@ -6,9 +6,9 @@ smoke_bundles:
 gate_bundles:
 - bionic-queens-ha
 - focal-ussuri-ha
+- focal-victoria-ha
 
 dev_bundles:
-- focal-victoria-ha
 - groovy-victoria-ha
 
 configure:
