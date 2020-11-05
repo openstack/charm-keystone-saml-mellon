@@ -7,8 +7,6 @@ gate_bundles:
 - bionic-queens-ha
 - focal-ussuri-ha
 - focal-victoria-ha
-
-dev_bundles:
 - groovy-victoria-ha
 
 configure:
