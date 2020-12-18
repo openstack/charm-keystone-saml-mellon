@@ -74,7 +74,11 @@ It is highly recommend that on the OpenStack charms side SSL/TLS be
 configured. We recommend deploying vault with a generated or uploaded
 certificate authority and relating to all OpenStack services. Optionally,
 ssl_ca, ssl_cert, and ssl_key can be configured on the OpenStack charms.
-See also, [deploying vault](https://docs.openstack.org/project-deploy-guide/charm-deployment-guide/latest/app-vault.html) and [certificate lifecycle management](https://docs.openstack.org/project-deploy-guide/charm-deployment-guide/latest/app-certificate-management.html).
+
+> **Note**: For Vault deployment instructions see the [vault
+  charm][vault-charm]. For certificate management information read the
+  [Managing TLS certificates with Vault][cdg-vault-certs] section in the
+  [OpenStack Charms Deployment Guide][cdg].
 
 Several key pairs can be used in a generic SAML exchange along with
 certificates containing public keys. Besides the pairs used for message-level
@@ -278,3 +282,5 @@ For general charm questions refer to the [OpenStack Charm Guide][cg].
 [cg]: https://docs.openstack.org/charm-guide
 [cdg]: https://docs.openstack.org/project-deploy-guide/charm-deployment-guide
 [lp-bugs-charm-keystone-saml-mellon]: https://bugs.launchpad.net/charm-keystone-saml-mellon/+filebug
+[vault-charm]: https://jaas.ai/vault/
+[cdg-vault-certs]: https://docs.openstack.org/project-deploy-guide/charm-deployment-guide/latest/app-certificate-management.html
