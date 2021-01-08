@@ -11,16 +11,19 @@ gate_bundles:
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
-- zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources
+- zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources_idp1
+- zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources_idp2
 - zaza.openstack.charm_tests.keystone.setup.add_demo_user
 - zaza.openstack.charm_tests.glance.setup.add_lts_image
 - zaza.openstack.charm_tests.nova.setup.create_flavors
 - zaza.openstack.charm_tests.nova.setup.manage_ssh_key
 - zaza.openstack.charm_tests.neutron.setup.basic_overcloud_network
-- zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup
+- zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup_idp1
+- zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup_idp2
 
 tests:
-- zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonTest
+- zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonIDP1Test
+- zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonIDP2Test
 - zaza.openstack.charm_tests.keystone.tests.AuthenticationAuthorizationTest
 
 target_deploy_status:
@@ -30,9 +33,18 @@ target_deploy_status:
   vault:
     workload-status: blocked
     workload-status-message: Vault needs to be initialized
-  keystone-saml-mellon:
+  keystone-saml-mellon1:
     workload-status: blocked
     workload-status-message: "Configuration is incomplete. idp-metadata: idp-metadata resource has not been provided,sp-signing-keyinfo: sp-signing-keyinfo resource has not been provided,sp-private-key: sp-private-key resource has not been provided"
+  test-saml-idp1:
+    workload-status: blocked
+    workload-status-message: "sp-metadata resource is not a well-formed xml file"
+  keystone-saml-mellon2:
+    workload-status: blocked
+    workload-status-message: "Configuration is incomplete. idp-metadata: idp-metadata resource has not been provided,sp-signing-keyinfo: sp-signing-keyinfo resource has not been provided,sp-private-key: sp-private-key resource has not been provided"
+  test-saml-idp2:
+    workload-status: blocked
+    workload-status-message: "sp-metadata resource is not a well-formed xml file"
 
 tests_options:
   force_deploy:
