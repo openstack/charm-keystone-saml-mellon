@@ -22,7 +22,6 @@ tags:
 series:
 - xenial
 - bionic
-- eoan
 - focal
 - groovy
 provides:
