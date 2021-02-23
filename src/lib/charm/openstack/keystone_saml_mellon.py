@@ -24,10 +24,13 @@ import charms_openstack.adapters
 
 import os
 import subprocess
+import urllib.request
+import urllib.error
 
 from lxml import etree
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+
 
 CONFIGS = (IDP_METADATA, SP_METADATA, SP_PRIVATE_KEY,
            SP_LOCATION_CONFIG,) = [
@@ -130,29 +133,63 @@ class KeystoneSAMLMellonConfigurationAdapter(
 
     IDP_METADATA_INVALID = ('idp-metadata resource is not a well-formed'
                             ' xml file')
+    IDP_METADATA_URL_ERROR = ('an error has occurred during idp-metadata-url'
+                              ' config option processing')
+    IDP_METADATA_NOT_PROVIDED = ('idp-metadata resource has not been provided')
 
     @property
     def idp_metadata(self):
-        idp_metadata_path = hookenv.resource_get('idp-metadata')
-        if os.path.exists(idp_metadata_path) and not self._idp_metadata:
-            with open(idp_metadata_path) as f:
-                content = f.read()
-                try:
-                    etree.fromstring(content.encode())
-                    self._idp_metadata = content
-                    self._validation_errors['idp-metadata'] = None
-                except etree.XMLSyntaxError:
-                    self._idp_metadata = ''
-                    self._validation_errors['idp-metadata'] = (
-                        self.IDP_METADATA_INVALID)
+        idp_metadata_content = None
+        if self.idp_metadata_url is None:
+            # Get metadata from resource
+            idp_metadata_path = hookenv.resource_get('idp-metadata')
+            if (idp_metadata_path and
+                    os.path.exists(idp_metadata_path) and not
+                    self._idp_metadata):
+                with open(idp_metadata_path, 'r', encoding='utf-8') as f:
+                    idp_metadata_content = f.read()
+            else:
+                self._validation_errors['idp-metadata'] =\
+                    self.IDP_METADATA_NOT_PROVIDED
+        else:
+            try:
+                response = urllib.request.urlopen(self.idp_metadata_url)
+            except urllib.error.URLError as e:
+                self._validation_errors['idp-metadata'] = '{}: {}'.format(
+                    self.IDP_METADATA_URL_ERROR,
+                    e.reason
+                )
+                return self._idp_metadata
+            encoded_content = response.read()
+            idp_metadata_content = encoded_content.decode("utf-8")
+
+        # Metadata has been provided either via a resource or downloaded from
+        # the specified URL.
+        if idp_metadata_content is not None:
+            try:
+                etree.fromstring(idp_metadata_content.encode())
+                self._idp_metadata = idp_metadata_content
+                self._validation_errors['idp-metadata'] = None
+            except etree.XMLSyntaxError:
+                self._idp_metadata = None
+                self._validation_errors['idp-metadata'] = (
+                    self.IDP_METADATA_INVALID)
+
         return self._idp_metadata
 
     SP_SIGNING_KEYINFO_INVALID = ('sp-signing-keyinfo resource is not a'
                                   ' well-formed xml file')
+    SP_SIGNING_KEYINFO_NOT_PROVIDED = ('sp-signing-keyinfo resource has not'
+                                       ' been provided')
 
     @property
     def sp_signing_keyinfo(self):
         info_path = hookenv.resource_get('sp-signing-keyinfo')
+        if not info_path:
+            self._sp_signing_keyinfo = None
+            self._validation_errors['sp-signing-keyinfo'] = (
+                self.SP_SIGNING_KEYINFO_NOT_PROVIDED)
+            return self._sp_signing_keyinfo
         if os.path.exists(info_path) and not self._sp_signing_keyinfo:
             self._sp_signing_keyinfo = None
             with open(info_path) as f:
@@ -167,12 +204,19 @@ class KeystoneSAMLMellonConfigurationAdapter(
                         self.SP_SIGNING_KEYINFO_INVALID)
         return self._sp_signing_keyinfo
 
-    SP_PRIVATE_KEY_INVALID = ('resource is not a well-formed'
+    SP_PRIVATE_KEY_INVALID = ('sp-private-key resource is not a well-formed'
                               ' RFC 5958 (PKCS#8) key')
+    SP_PRIVATE_KEY_NOT_PROVIDED = ('sp-private-key resource has not'
+                                   ' been provided')
 
     @property
     def sp_private_key(self):
         pk_path = hookenv.resource_get('sp-private-key')
+        if not pk_path:
+            self._sp_private_key = None
+            self._validation_errors['sp-private-key'] = (
+                self.SP_PRIVATE_KEY_NOT_PROVIDED)
+            return self._sp_private_key
         if os.path.exists(pk_path) and not self._sp_private_key:
             with open(pk_path) as f:
                 content = f.read()
@@ -245,8 +289,8 @@ class KeystoneSAMLMellonCharm(charms_openstack.charm.OpenStackCharm):
             'protocol-name': self.options.protocol_name,
             'user-facing-name': self.options.user_facing_name,
             'idp-metadata': self.options.idp_metadata,
-            'sp-private-key': self.options.sp_private_key,
             'sp-signing-keyinfo': self.options.sp_signing_keyinfo,
+            'sp-private-key': self.options.sp_private_key,
             'nameid-formats': self.options.nameid_formats,
         }
 

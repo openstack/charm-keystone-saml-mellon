@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import mock
+import urllib.error
 
 import charms_openstack.test_utils as test_utils
 
@@ -53,7 +54,8 @@ class Helper(test_utils.PatchHelper):
             "protocol-name": self.protocol_name,
             "user-facing-name": self.user_facing_name,
             "nameid-formats": self.nameid_formats,
-            "subject-confirmation-data-address-check": False
+            "subject-confirmation-data-address-check": False,
+            "idp-metadata-url": None
         }
         self.resources = {
             "idp-metadata": "/path/to/idp-metadata.xml",
@@ -194,15 +196,90 @@ class TestKeystoneSAMLMellonConfigurationAdapter(Helper):
             "</EntityDescriptor>")
         self.file.read.return_value = self.idp_metadata_xml
         self.assertEqual(ksmca.idp_metadata, self.idp_metadata_xml)
-        self.open.assert_called_with(self.resources["idp-metadata"])
+        self.open.assert_called_with(self.resources["idp-metadata"],
+                                     'r', encoding='utf-8')
 
-        # Inalid XML
+        # Invalid XML
         ksmca._idp_metadata = None
         self.file.read.return_value = "INVALID XML"
-        self.assertEqual(ksmca.idp_metadata, "")
+        self.assertEqual(ksmca.idp_metadata, None)
         self.assertEqual(
             ksmca._validation_errors,
             {"idp-metadata": ksmca.IDP_METADATA_INVALID})
+
+    def test_no_resources(self):
+        resources = {
+            "idp-metadata": False,
+            "sp-private-key": False,
+            "sp-signing-keyinfo": False
+        }
+        self.patch_object(keystone_saml_mellon.hookenv, 'resource_get',
+                          side_effect=FakeResourceGet(resources))
+        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
+
+        self.assertEqual(ksmca.idp_metadata, None)
+        self.assertEqual(
+            ksmca._validation_errors,
+            {"idp-metadata": ksmca.IDP_METADATA_NOT_PROVIDED})
+
+        self.assertEqual(ksmca.sp_signing_keyinfo, None)
+        self.assertEqual(
+            ksmca._validation_errors,
+            {"idp-metadata": ksmca.IDP_METADATA_NOT_PROVIDED,
+             "sp-signing-keyinfo": ksmca.SP_SIGNING_KEYINFO_NOT_PROVIDED})
+
+        self.assertEqual(ksmca.sp_private_key, None)
+        self.assertEqual(
+            ksmca._validation_errors,
+            {"idp-metadata": ksmca.IDP_METADATA_NOT_PROVIDED,
+             "sp-signing-keyinfo": ksmca.SP_SIGNING_KEYINFO_NOT_PROVIDED,
+             "sp-private-key": ksmca.SP_PRIVATE_KEY_NOT_PROVIDED})
+
+    def test_idp_metadata_url(self):
+        self.test_config.update(
+            {'idp-metadata-url': 'https://samltest.id/saml/idp'}
+        )
+        self.patch_object(keystone_saml_mellon.hookenv, 'config',
+                          side_effect=FakeConfig(self.test_config))
+        resources = {
+            "idp-metadata": False,
+            "sp-private-key": False,
+            "sp-signing-keyinfo": False
+        }
+        self.patch_object(keystone_saml_mellon.hookenv, 'resource_get',
+                          side_effect=FakeResourceGet(resources))
+        response = mock.MagicMock()
+        idp_meta_xml = (
+            "<?xml version='1.0' encoding='UTF-8'?>"
+            "<EntityDescriptor  entityID='https://samltest.id/saml/idp'> "
+            "</EntityDescriptor>"
+        )
+        response.read.return_value = idp_meta_xml.encode('utf-8')
+        self.patch_object(keystone_saml_mellon.urllib.request, 'urlopen',
+                          return_value=response)
+
+        ksmca = keystone_saml_mellon.KeystoneSAMLMellonConfigurationAdapter()
+        # Valid XML
+        self.assertEqual(ksmca.idp_metadata, idp_meta_xml)
+
+        # Invalid XML
+        response = mock.MagicMock()
+        response.read.return_value = "foobar42".encode('utf-8')
+        self.patch_object(keystone_saml_mellon.urllib.request, 'urlopen',
+                          return_value=response)
+        ksmca._idp_metadata = None
+        self.assertEqual(ksmca.idp_metadata, None)
+        self.assertEqual(
+            ksmca._validation_errors,
+            {"idp-metadata": ksmca.IDP_METADATA_INVALID})
+
+        # Invalid URL
+        self.patch_object(keystone_saml_mellon.urllib.request, 'urlopen',
+                          side_effect=urllib.error.URLError('invalid URL'))
+        self.assertEqual(ksmca.idp_metadata, None)
+        self.assertEqual(
+            ksmca._validation_errors,
+            {"idp-metadata": ksmca.IDP_METADATA_URL_ERROR + ': invalid URL'})
 
     def test_sp_signing_keyinfo(self):
         self.os.path.exists.return_value = True
