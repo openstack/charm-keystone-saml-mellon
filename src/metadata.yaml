@@ -24,6 +24,7 @@ series:
 - bionic
 - focal
 - groovy
+- hirsute
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
