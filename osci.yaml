@@ -3,16 +3,18 @@
       - charm-unit-jobs
     check:
       jobs:
-      - bionic-queens-ha_keystone-saml-melon
-      - focal-ussuri-ha_keystone-saml-melon
-      - focal-victoria-ha_keystone-saml-melon
-      - groovy-victoria-ha_keystone-saml-melon
+      - bionic-queens-ha_keystone-saml-mellon
+      - focal-ussuri-ha_keystone-saml-mellon
+      - focal-victoria-ha_keystone-saml-mellon
+      - focal-wallaby-ha_keystone-saml-mellon
+      - groovy-victoria-ha_keystone-saml-mellon
+      - hirsute-wallaby-ha_keystone-saml-mellon
     vars:
       needs_charm_build: true
       charm_build_name: keystone-saml-mellon
 
 - job:
-    name: bionic-queens-ha_keystone-saml-melon
+    name: bionic-queens-ha_keystone-saml-mellon
     parent: func-target
     dependencies:
       - osci-lint
@@ -23,21 +25,33 @@
     vars:
       tox_extra_args: bionic-queens-ha
 - job:
-    name: focal-ussuri-ha_keystone-saml-melon
+    name: focal-ussuri-ha_keystone-saml-mellon
     parent: func-target
     dependencies:  &smoke-jobs
-     - bionic-queens-ha_keystone-saml-melon
+     - bionic-queens-ha_keystone-saml-mellon
     vars:
       tox_extra_args: focal-ussuri-ha
 - job:
-    name: focal-victoria-ha_keystone-saml-melon
+    name: focal-victoria-ha_keystone-saml-mellon
     parent: func-target
     dependencies:  *smoke-jobs
     vars:
       tox_extra_args: focal-victoria-ha
 - job:
-    name: groovy-victoria-ha_keystone-saml-melon
+    name: focal-wallaby-ha_keystone-saml-mellon
+    parent: func-target
+    dependencies:  *smoke-jobs
+    vars:
+      tox_extra_args: focal-wallaby-ha
+- job:
+    name: groovy-victoria-ha_keystone-saml-mellon
     parent: func-target
     dependencies:  *smoke-jobs
     vars:
       tox_extra_args: groovy-victoria-ha
+- job:
+    name: hirsute-wallaby-ha_keystone-saml-mellon
+    parent: func-target
+    dependencies:  *smoke-jobs
+    vars:
+      tox_extra_args: hirsute-wallaby-ha

@@ -1,13 +1,17 @@
 charm_name: keystone-saml-mellon
 
 smoke_bundles:
-- bionic-queens-ha
+- focal-ussuri-ha
 
 gate_bundles:
 - bionic-queens-ha
 - focal-ussuri-ha
 - focal-victoria-ha
+- focal-wallaby-ha
 - groovy-victoria-ha
+
+dev_bundles:
+- hirsute-wallaby-ha
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
@@ -48,4 +52,4 @@ target_deploy_status:
 
 tests_options:
   force_deploy:
-    - groovy-victoria-ha
+    - hirsute-wallaby-ha
