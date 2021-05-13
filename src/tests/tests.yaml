@@ -53,3 +53,4 @@ target_deploy_status:
 tests_options:
   force_deploy:
     - hirsute-wallaby-ha
+    - groovy-victoria-ha
