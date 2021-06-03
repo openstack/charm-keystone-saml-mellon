@@ -25,6 +25,7 @@ series:
 - focal
 - groovy
 - hirsute
+- impish
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
