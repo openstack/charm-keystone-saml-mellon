@@ -37,6 +37,11 @@ target_deploy_status:
   vault:
     workload-status: blocked
     workload-status-message: Vault needs to be initialized
+  keystone-saml-mellon:
+    # NOTE(lourot): because this is the charm name, Zaza automatically
+    # deploys this application with no unit, although we don't mention it in
+    # any test bundle.
+    num-expected-units: 0
   keystone-saml-mellon1:
     workload-status: blocked
     workload-status-message: "Configuration is incomplete. idp-metadata: idp-metadata resource has not been provided,sp-signing-keyinfo: sp-signing-keyinfo resource has not been provided,sp-private-key: sp-private-key resource has not been provided"
