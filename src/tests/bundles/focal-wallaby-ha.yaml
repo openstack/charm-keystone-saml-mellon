@@ -179,6 +179,7 @@ applications:
       user-facing-name: "Test SAML IDP #1"
       subject-confirmation-data-address-check: False
       nameid-formats: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+
   test-saml-idp1:
     charm: cs:~ionutbalutoiu/test-saml-idp
     num_units: 1
@@ -198,6 +199,7 @@ applications:
       user-facing-name: "Test SAML IDP #2"
       subject-confirmation-data-address-check: False
       nameid-formats: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
+
   test-saml-idp2:
     charm: cs:~ionutbalutoiu/test-saml-idp
     num_units: 1
@@ -213,6 +215,7 @@ applications:
     options:
       corosync_transport: unicast
       cluster_count: 3
+
   openstack-dashboard-hacluster:
     charm: cs:~openstack-charmers-next/hacluster
     num_units: 0

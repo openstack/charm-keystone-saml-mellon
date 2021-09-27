@@ -7,7 +7,11 @@
       - focal-ussuri-ha_keystone-saml-mellon
       - focal-victoria-ha_keystone-saml-mellon
       - focal-wallaby-ha_keystone-saml-mellon
+      - focal-xena-ha_keystone-saml-mellon:
+          voting: false
       - hirsute-wallaby-ha_keystone-saml-mellon
+      - impish-xena-ha_keystone-saml-mellon:
+          voting: false
     vars:
       needs_charm_build: true
       charm_build_name: keystone-saml-mellon
@@ -43,8 +47,20 @@
     vars:
       tox_extra_args: focal-wallaby-ha
 - job:
+    name: focal-xena-ha_keystone-saml-mellon
+    parent: func-target
+    dependencies:  *smoke-jobs
+    vars:
+      tox_extra_args: focal-xena-ha
+- job:
     name: hirsute-wallaby-ha_keystone-saml-mellon
     parent: func-target
     dependencies:  *smoke-jobs
     vars:
       tox_extra_args: hirsute-wallaby-ha
+- job:
+    name: impish-xena-ha_keystone-saml-mellon
+    parent: func-target
+    dependencies:  *smoke-jobs
+    vars:
+      tox_extra_args: impish-xena-ha

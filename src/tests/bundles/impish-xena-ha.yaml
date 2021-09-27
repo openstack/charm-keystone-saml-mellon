@@ -1,7 +1,7 @@
 variables:
   openstack-origin: &openstack-origin distro
 
-series: hirsute
+series: impish
 
 comment:
 - 'machines section to decide order of deployment. database sooner = faster'
@@ -132,6 +132,11 @@ applications:
     to:
       - '11'
       - '12'
+
+  ntp:
+    charm: cs:ntp
+    series: focal
+    num_units: 0
 
   openstack-dashboard:
     charm: cs:~openstack-charmers-next/openstack-dashboard
@@ -318,6 +323,12 @@ relations:
     - 'cinder-mysql-router:shared-db'
   - - 'cinder-mysql-router:db-router'
     - 'mysql-innodb-cluster:db-router'
+
+  - - 'ntp:juju-info'
+    - 'nova-compute:juju-info'
+
+  - - 'ntp:juju-info'
+    - 'neutron-gateway:juju-info'
 
   - - 'keystone'
     - 'keystone-saml-mellon1'
