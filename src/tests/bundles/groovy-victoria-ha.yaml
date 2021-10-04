@@ -133,10 +133,6 @@ applications:
       - '11'
       - '12'
 
-  ntp:
-    charm: cs:ntp
-    num_units: 0
-
   openstack-dashboard:
     charm: cs:~openstack-charmers-next/openstack-dashboard
     num_units: 3
@@ -317,12 +313,6 @@ relations:
     - 'cinder-mysql-router:shared-db'
   - - 'cinder-mysql-router:db-router'
     - 'mysql-innodb-cluster:db-router'
-
-  - - 'ntp:juju-info'
-    - 'nova-compute:juju-info'
-
-  - - 'ntp:juju-info'
-    - 'neutron-gateway:juju-info'
 
   - - 'keystone'
     - 'keystone-saml-mellon1'

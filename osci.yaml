@@ -7,7 +7,6 @@
       - focal-ussuri-ha_keystone-saml-mellon
       - focal-victoria-ha_keystone-saml-mellon
       - focal-wallaby-ha_keystone-saml-mellon
-      - groovy-victoria-ha_keystone-saml-mellon
       - hirsute-wallaby-ha_keystone-saml-mellon
     vars:
       needs_charm_build: true
@@ -43,12 +42,6 @@
     dependencies:  *smoke-jobs
     vars:
       tox_extra_args: focal-wallaby-ha
-- job:
-    name: groovy-victoria-ha_keystone-saml-mellon
-    parent: func-target
-    dependencies:  *smoke-jobs
-    vars:
-      tox_extra_args: groovy-victoria-ha
 - job:
     name: hirsute-wallaby-ha_keystone-saml-mellon
     parent: func-target
