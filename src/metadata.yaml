@@ -20,7 +20,6 @@ tags:
 - federation
 - idP
 series:
-- xenial
 - bionic
 - focal
 - groovy
