@@ -20,10 +20,7 @@ tags:
 - federation
 - idP
 series:
-- bionic
 - focal
-- groovy
-- hirsute
 - impish
 provides:
   keystone-fid-service-provider:

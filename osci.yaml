@@ -1,23 +1,9 @@
 - project:
     templates:
-      - charm-yoga-unit-jobs
-      - charm-yoga-functional-jobs
+      - charm-unit-jobs-py38
+      - charm-unit-jobs-py39
       - charm-xena-functional-jobs
-      - charm-wallaby-functional-jobs
-      - charm-victoria-functional-jobs
-      # Non-voting due to:
-      # https://bugs.launchpad.net/charm-keystone-saml-mellon/+bug/1840515
-      # - charm-ussuri-functional-jobs
-      - charm-stein-functional-jobs
-      - charm-queens-functional-jobs
-    check:
-      jobs:
-        # Non-voting due to:
-        # https://bugs.launchpad.net/charm-keystone-saml-mellon/+bug/1840515
-        - bionic-ussuri:
-            voting: false
-        - focal-ussuri:
-            voting: false
+      - charm-yoga-functional-jobs
     vars:
       needs_charm_build: true
       charm_build_name: keystone-saml-mellon
