@@ -1,6 +1,8 @@
 variables:
   openstack-origin: &openstack-origin distro
 
+local_overlay_enabled: False
+
 series: jammy
 
 comment:
@@ -193,7 +195,7 @@ applications:
 
   keystone-saml-mellon1:
     series: groovy
-    charm: ../../../keystone-saml-mellon
+    charm: ../../../keystone-saml-mellon.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -214,7 +216,7 @@ applications:
 
   keystone-saml-mellon2:
     series: groovy
-    charm: ../../../keystone-saml-mellon
+    charm: ../../../keystone-saml-mellon.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
