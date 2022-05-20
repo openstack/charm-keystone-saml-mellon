@@ -1,50 +1,41 @@
 - project:
     templates:
-      - charm-unit-jobs
+      - charm-unit-jobs-py36
+      - charm-unit-jobs-py38
     check:
       jobs:
-      - bionic-queens-ha_keystone-saml-mellon
+      - bionic-train-ha_keystone-saml-mellon
+      - bionic-ussuri-ha_keystone-saml-mellon
       - focal-ussuri-ha_keystone-saml-mellon
-      - focal-victoria-ha_keystone-saml-mellon
-      - focal-wallaby-ha_keystone-saml-mellon
-      - hirsute-wallaby-ha_keystone-saml-mellon
     vars:
       needs_charm_build: true
       charm_build_name: keystone-saml-mellon
+      build_type: charmcraft
 
 - job:
-    name: bionic-queens-ha_keystone-saml-mellon
+    name: bionic-train-ha_keystone-saml-mellon
     parent: func-target
     dependencies:
+      - charm-build
       - osci-lint
-      - tox-py35
       - tox-py36
-      - tox-py37
-      - tox-py38
     vars:
-      tox_extra_args: bionic-queens-ha
+      tox_extra_args: bionic-train-ha
+- job:
+    name: bionic-ussuri-ha_keystone-saml-mellon
+    parent: func-target
+    dependencies:
+      - charm-build
+      - osci-lint
+      - tox-py36
+    vars:
+      tox_extra_args: bionic-ussuri-ha
 - job:
     name: focal-ussuri-ha_keystone-saml-mellon
     parent: func-target
-    dependencies:  &smoke-jobs
-     - bionic-queens-ha_keystone-saml-mellon
+    dependencies:
+      - charm-build
+      - osci-lint
+      - tox-py38
     vars:
       tox_extra_args: focal-ussuri-ha
-- job:
-    name: focal-victoria-ha_keystone-saml-mellon
-    parent: func-target
-    dependencies:  *smoke-jobs
-    vars:
-      tox_extra_args: focal-victoria-ha
-- job:
-    name: focal-wallaby-ha_keystone-saml-mellon
-    parent: func-target
-    dependencies:  *smoke-jobs
-    vars:
-      tox_extra_args: focal-wallaby-ha
-- job:
-    name: hirsute-wallaby-ha_keystone-saml-mellon
-    parent: func-target
-    dependencies:  *smoke-jobs
-    vars:
-      tox_extra_args: hirsute-wallaby-ha
