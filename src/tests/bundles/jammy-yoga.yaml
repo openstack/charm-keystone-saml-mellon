@@ -152,11 +152,6 @@ applications:
       - '12'
     channel: latest/edge
 
-  ntp:
-    charm: cs:ntp
-    series: focal
-    num_units: 0
-
   openstack-dashboard:
     charm: ch:openstack-dashboard
     num_units: 3
@@ -194,7 +189,7 @@ applications:
     channel: latest/edge
 
   keystone-saml-mellon1:
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -214,8 +209,7 @@ applications:
       auth-user-password: 'userpass1'
 
   keystone-saml-mellon2:
-    series: groovy
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
@@ -347,12 +341,6 @@ relations:
     - 'cinder-mysql-router:shared-db'
   - - 'cinder-mysql-router:db-router'
     - 'mysql-innodb-cluster:db-router'
-
-  - - 'ntp:juju-info'
-    - 'nova-compute:juju-info'
-
-  - - 'ntp:juju-info'
-    - 'neutron-gateway:juju-info'
 
   - - 'keystone'
     - 'keystone-saml-mellon1'

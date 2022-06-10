@@ -1,14 +1,15 @@
 charm_name: keystone-saml-mellon
 
 smoke_bundles:
-- focal-xena
+- jammy-yoga
 
 gate_bundles:
-- focal-xena
+- jammy-yoga
 
 dev_bundles:
-- focal-yoga
 - jammy-yoga
+- jammy-zed
+- kinetic-zed
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
@@ -54,4 +55,4 @@ target_deploy_status:
 
 tests_options:
   force_deploy:
-    - jammy-yoga
+    - kinetic-zed

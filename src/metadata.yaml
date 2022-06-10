@@ -20,8 +20,8 @@ tags:
 - federation
 - idP
 series:
-- focal
 - jammy
+- kinetic
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
