@@ -1,3 +1,5 @@
+local_overlay_enabled: False
+
 relations:
 - - nova-compute:amqp
   - rabbitmq-server:amqp
@@ -87,68 +89,80 @@ relations:
 series: bionic
 services:
   cinder:
-    charm: cs:~openstack-charmers/cinder
+    charm: ch:cinder
     num_units: 1
     options:
       block-device: None
       glance-api-version: 2
+    channel: train/edge
   glance:
-    charm: cs:~openstack-charmers/glance
+    charm: ch:glance
     num_units: 1
+    channel: train/edge
   keystone:
-    charm: cs:~openstack-charmers/keystone
+    charm: ch:keystone
     num_units: 1
     options:
       token-provider: 'fernet'
+    channel: train/edge
   mysql:
-    charm: cs:~openstack-charmers/percona-cluster
+    charm: ch:percona-cluster
     num_units: 1
     constraints: mem=3072M
     options:
       innodb-buffer-pool-size: 256M
       max-connections: 1000
+    channel: 5.7/edge
   neutron-api:
-    charm: cs:~openstack-charmers/neutron-api
+    charm: ch:neutron-api
     num_units: 1
     options:
       flat-network-providers: physnet1
       neutron-security-groups: true
+    channel: train/edge
   neutron-gateway:
-    charm: cs:~openstack-charmers/neutron-gateway
+    charm: ch:neutron-gateway
     num_units: 1
     options:
       bridge-mappings: physnet1:br-ex
+    channel: train/edge
   neutron-openvswitch:
-    charm: cs:~openstack-charmers/neutron-openvswitch
+    charm: ch:neutron-openvswitch
     num_units: 0
+    channel: train/edge
   nova-cloud-controller:
-    charm: cs:~openstack-charmers/nova-cloud-controller
+    charm: ch:nova-cloud-controller
     num_units: 1
     options:
       network-manager: Neutron
+    channel: train/edge
   nova-compute:
-    charm: cs:~openstack-charmers/nova-compute
+    charm: ch:nova-compute
     num_units: 2
     options:
       config-flags: default_ephemeral_format=ext4
       enable-live-migration: true
       enable-resize: true
       migration-auth-type: ssh
+    channel: train/edge
   ntp:
     charm: cs:ntp
     num_units: 0
   openstack-dashboard:
-    charm: cs:~openstack-charmers/openstack-dashboard
+    charm: ch:openstack-dashboard
     num_units: 1
+    channel: train/edge
   rabbitmq-server:
-    charm: cs:~openstack-charmers/rabbitmq-server
+    charm: ch:rabbitmq-server
     num_units: 1
+    channel: 3.6/edge
   vault:
     num_units: 1
-    charm: cs:~openstack-charmers/vault
+    charm: ch:vault
+    channel: 1.6/edge
   keystone-saml-mellon1:
     series: bionic
-    charm: ../../../keystone-saml-mellon
+    charm: ../../../keystone-saml-mellon.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -157,7 +171,7 @@ services:
       subject-confirmation-data-address-check: False
       nameid-formats: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   test-saml-idp1:
-    charm: cs:~ionutbalutoiu/test-saml-idp
+    charm: ch:ionutbalutoiu-test-saml-idp
     num_units: 1
     options:
       idp-name: 'test-saml-idp1'
@@ -166,7 +180,7 @@ services:
       auth-user-password: 'userpass1'
   keystone-saml-mellon2:
     series: bionic
-    charm: ../../../keystone-saml-mellon
+    charm: ../../../keystone-saml-mellon.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
@@ -175,7 +189,7 @@ services:
       subject-confirmation-data-address-check: False
       nameid-formats: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
   test-saml-idp2:
-    charm: cs:~ionutbalutoiu/test-saml-idp
+    charm: ch:ionutbalutoiu-test-saml-idp
     num_units: 1
     options:
       idp-name: 'test-saml-idp2'
