@@ -193,8 +193,7 @@ applications:
     channel: latest/edge
 
   keystone-saml-mellon1:
-    series: focal
-    charm: ../../../keystone-saml-mellon.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-20.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -214,7 +213,7 @@ applications:
 
   keystone-saml-mellon2:
     series: focal
-    charm: ../../../keystone-saml-mellon.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-20.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
