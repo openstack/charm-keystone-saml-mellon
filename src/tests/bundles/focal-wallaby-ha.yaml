@@ -197,6 +197,8 @@ applications:
     charm: ../../../keystone-saml-mellon.charm
     num_units: 0
     options:
+      debug: True
+      verbose: True
       idp-name: 'test-saml-idp1'
       protocol-name: 'mapped'
       user-facing-name: "Test SAML IDP #1"
@@ -218,6 +220,8 @@ applications:
     charm: ../../../keystone-saml-mellon.charm
     num_units: 0
     options:
+      debug: True
+      verbose: True
       idp-name: 'test-saml-idp2'
       protocol-name: 'mapped'
       user-facing-name: "Test SAML IDP #2"
