@@ -35,39 +35,37 @@ applications:
 
   keystone-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   neutron-api-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   glance-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   openstack-dashboard-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   nova-cloud-controller-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   cinder-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   vault-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   placement-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
 
   mysql-innodb-cluster:
     charm: ch:mysql-innodb-cluster
     num_units: 3
-    options:
-      source: *openstack-origin
     to:
       - '0'
       - '1'
       - '2'
-    channel: latest/edge
+    channel: 8.0/edge
 
   cinder:
     num_units: 1
@@ -78,7 +76,7 @@ applications:
       block-device: None
     to:
       - '3'
-    channel: latest/edge
+    channel: zed/edge
 
   glance:
     charm: ch:glance
@@ -87,7 +85,7 @@ applications:
       openstack-origin: *openstack-origin
     to:
       - '4'
-    channel: latest/edge
+    channel: zed/edge
 
   keystone:
     charm: ch:keystone
@@ -99,7 +97,7 @@ applications:
       - '5'
       - '6'
       - '7'
-    channel: latest/edge
+    channel: zed/edge
 
   neutron-api:
     charm: ch:neutron-api
@@ -111,7 +109,7 @@ applications:
       neutron-security-groups: true
     to:
       - '8'
-    channel: latest/edge
+    channel: zed/edge
 
   neutron-gateway:
     charm: ch:neutron-gateway
@@ -121,12 +119,12 @@ applications:
       bridge-mappings: physnet1:br-ex
     to:
       - '9'
-    channel: latest/edge
+    channel: zed/edge
 
   neutron-openvswitch:
     charm: ch:neutron-openvswitch
     num_units: 0
-    channel: latest/edge
+    channel: zed/edge
 
   nova-cloud-controller:
     charm: ch:nova-cloud-controller
@@ -136,7 +134,7 @@ applications:
       network-manager: Neutron
     to:
       - '10'
-    channel: latest/edge
+    channel: zed/edge
 
   nova-compute:
     charm: ch:nova-compute
@@ -150,7 +148,7 @@ applications:
     to:
       - '11'
       - '12'
-    channel: latest/edge
+    channel: zed/edge
 
   openstack-dashboard:
     charm: ch:openstack-dashboard
@@ -161,16 +159,14 @@ applications:
       - '13'
       - '14'
       - '15'
-    channel: latest/edge
+    channel: zed/edge
 
   rabbitmq-server:
     charm: ch:rabbitmq-server
     num_units: 1
-    options:
-      source: *openstack-origin
     to:
       - '16'
-    channel: latest/edge
+    channel: 3.9/edge
 
   vault:
     num_units: 1
@@ -186,7 +182,7 @@ applications:
       openstack-origin: *openstack-origin
     to:
       - '18'
-    channel: latest/edge
+    channel: zed/edge
 
   keystone-saml-mellon1:
     charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64.charm
@@ -232,7 +228,7 @@ applications:
     options:
       corosync_transport: unicast
       cluster_count: 3
-    channel: latest/edge
+    channel: 2.4/edge
 
   openstack-dashboard-hacluster:
     charm: ch:hacluster
@@ -240,7 +236,7 @@ applications:
     options:
       corosync_transport: unicast
       cluster_count: 3
-    channel: latest/edge
+    channel: 2.4/edge
 
 relations:
 
