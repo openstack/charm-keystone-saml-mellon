@@ -3,4 +3,4 @@ repo: https://github.com/openstack-charmers/charm-keystone-saml-mellon
 options:
   basic:
     use_venv: True
-    packages: [ 'libffi-dev', 'libssl-dev', 'libxslt1-dev' ]
+    packages: [ 'libffi-dev', 'libssl-dev', 'libxslt1-dev', 'libxml2-dev' ]
