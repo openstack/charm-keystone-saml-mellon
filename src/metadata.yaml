@@ -22,6 +22,7 @@ tags:
 series:
 - jammy
 - kinetic
+- lunar
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider

@@ -1,5 +1,5 @@
 variables:
-  openstack-origin: &openstack-origin distro
+  openstack-origin: &openstack-origin cloud:jammy-antelope
 
 local_overlay_enabled: False
 
@@ -187,7 +187,7 @@ applications:
     channel: latest/edge
 
   keystone-saml-mellon1:
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64_ubuntu-23.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -199,7 +199,6 @@ applications:
   test-saml-idp1:
     charm: ch:ionutbalutoiu-test-saml-idp
     num_units: 1
-    series: focal
     options:
       idp-name: 'test-saml-idp1'
       protocol-name: 'mapped'
@@ -207,7 +206,7 @@ applications:
       auth-user-password: 'userpass1'
 
   keystone-saml-mellon2:
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64_ubuntu-23.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
@@ -219,7 +218,6 @@ applications:
   test-saml-idp2:
     charm: ch:ionutbalutoiu-test-saml-idp
     num_units: 1
-    series: focal
     options:
       idp-name: 'test-saml-idp2'
       protocol-name: 'mapped'

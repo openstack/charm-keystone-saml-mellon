@@ -1,15 +1,15 @@
 charm_name: keystone-saml-mellon
 
 smoke_bundles:
-- jammy-yoga
+- jammy-zed
 
 gate_bundles:
-- jammy-yoga
+- jammy-zed
 
 dev_bundles:
-- jammy-yoga
-- jammy-zed
+- jammy-antelope
 - kinetic-zed
+- lunar-antelope
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
@@ -56,3 +56,4 @@ target_deploy_status:
 tests_options:
   force_deploy:
     - kinetic-zed
+    - lunar-antelope
