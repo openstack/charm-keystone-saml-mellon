@@ -21,8 +21,8 @@ tags:
 - idP
 series:
 - jammy
-- kinetic
 - lunar
+- mantic
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider

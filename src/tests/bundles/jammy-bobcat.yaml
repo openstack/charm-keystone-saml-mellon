@@ -1,7 +1,7 @@
 variables:
-  openstack-origin: &openstack-origin cloud:jammy-zed
+  openstack-origin: &openstack-origin cloud:jammy-bobcat
 
-local_overlay_enabled: False
+local_overlay_enabled: True
 
 series: jammy
 
@@ -187,7 +187,7 @@ applications:
     channel: latest/edge
 
   keystone-saml-mellon1:
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64_ubuntu-23.04-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -206,7 +206,7 @@ applications:
       auth-user-password: 'userpass1'
 
   keystone-saml-mellon2:
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64_ubuntu-22.10-amd64_ubuntu-23.04-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
