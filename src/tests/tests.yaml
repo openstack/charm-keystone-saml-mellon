@@ -1,32 +1,29 @@
 charm_name: keystone-saml-mellon
 
 smoke_bundles:
-- jammy-antelope
-
+  - jammy-caracal
 gate_bundles:
-- jammy-antelope
-
+  - jammy-antelope
+  - jammy-bobcat
+  - jammy-caracal
 dev_bundles:
-- jammy-bobcat
-- lunar-antelope
-- mantic-bobcat
-
+  - noble-caracal
 configure:
-- zaza.openstack.charm_tests.vault.setup.auto_initialize
-- zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources_idp1
-- zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources_idp2
-- zaza.openstack.charm_tests.keystone.setup.add_demo_user
-- zaza.openstack.charm_tests.glance.setup.add_lts_image
-- zaza.openstack.charm_tests.nova.setup.create_flavors
-- zaza.openstack.charm_tests.nova.setup.manage_ssh_key
-- zaza.openstack.charm_tests.neutron.setup.basic_overcloud_network
-- zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup_idp1
-- zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup_idp2
+  - zaza.openstack.charm_tests.vault.setup.auto_initialize
+  - zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources_idp1
+  - zaza.openstack.charm_tests.saml_mellon.setup.attach_saml_resources_idp2
+  - zaza.openstack.charm_tests.keystone.setup.add_demo_user
+  - zaza.openstack.charm_tests.glance.setup.add_lts_image
+  - zaza.openstack.charm_tests.nova.setup.create_flavors
+  - zaza.openstack.charm_tests.nova.setup.manage_ssh_key
+  - zaza.openstack.charm_tests.neutron.setup.basic_overcloud_network
+  - zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup_idp1
+  - zaza.openstack.charm_tests.saml_mellon.setup.keystone_federation_setup_idp2
 
 tests:
-- zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonIDP1Test
-- zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonIDP2Test
-- zaza.openstack.charm_tests.keystone.tests.AuthenticationAuthorizationTest
+  - zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonIDP1Test
+  - zaza.openstack.charm_tests.saml_mellon.tests.CharmKeystoneSAMLMellonIDP2Test
+  - zaza.openstack.charm_tests.keystone.tests.AuthenticationAuthorizationTest
 
 target_deploy_status:
   ntp:
@@ -55,5 +52,4 @@ target_deploy_status:
 
 tests_options:
   force_deploy:
-    - lunar-antelope
-    - mantic-bobcat
+    - noble-caracal

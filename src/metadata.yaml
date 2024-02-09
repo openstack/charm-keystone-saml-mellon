@@ -15,14 +15,12 @@ description: The main goal of this charm is to generate the necessary configurat
   and using them in mappings defined by an operator or validating the existence of
   referenced IDs.
 tags:
-- openstack
-- identity
-- federation
-- idP
+  - openstack
+  - identity
+  - federation
+  - idP
 series:
-- jammy
-- lunar
-- mantic
+  - jammy
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
