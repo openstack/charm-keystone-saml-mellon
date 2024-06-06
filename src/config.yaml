@@ -69,6 +69,14 @@ options:
       IDP discovery service URL. If set to "" (default) no discovery
       service will be used. If used, the resource "idp-metadata" must
       be an XML file containing descriptors for multiple IDPs
+  allow-cross-site-cookies:
+    type: boolean
+    default: false
+    description: |
+      Relaxes cross-site cookie security requirements to improve
+      compatibility with IDP providers. However, enabling this
+      options requires that the connection to the IDP provider is
+      HTTPS-Secure to avoid cookie rejection by some modern browsers.
   idp-metadata-url:
     type: string
     default:
