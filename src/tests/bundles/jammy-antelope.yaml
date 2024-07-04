@@ -198,6 +198,7 @@ applications:
 
   test-saml-idp1:
     charm: ch:ionutbalutoiu-test-saml-idp
+    series: focal
     num_units: 1
     options:
       idp-name: 'test-saml-idp1'
@@ -217,6 +218,7 @@ applications:
 
   test-saml-idp2:
     charm: ch:ionutbalutoiu-test-saml-idp
+    series: focal
     num_units: 1
     options:
       idp-name: 'test-saml-idp2'
