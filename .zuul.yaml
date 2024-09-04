@@ -1,3 +1,8 @@
 - project:
     templates:
       - openstack-python3-charm-jobs
+    check:
+      jobs:
+        - charmbuild
+    vars:
+      charm_build_name: keystone-saml-mellon

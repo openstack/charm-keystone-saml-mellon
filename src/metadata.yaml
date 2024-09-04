@@ -19,8 +19,6 @@ tags:
   - identity
   - federation
   - idP
-series:
-  - jammy
 provides:
   keystone-fid-service-provider:
     interface: keystone-fid-service-provider
