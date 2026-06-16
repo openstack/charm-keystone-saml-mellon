@@ -9,7 +9,6 @@ gate_bundles:
 dev_bundles:
 - jammy-yoga
 - jammy-zed
-- kinetic-zed
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
@@ -52,7 +51,3 @@ target_deploy_status:
   test-saml-idp2:
     workload-status: blocked
     workload-status-message-prefix: "sp-metadata resource is not a well-formed xml file"
-
-tests_options:
-  force_deploy:
-    - kinetic-zed
