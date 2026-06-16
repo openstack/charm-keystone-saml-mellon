@@ -1,4 +1,4 @@
-ariables:
+variables:
   openstack-origin: &openstack-origin distro
 
 local_overlay_enabled: True
@@ -187,7 +187,7 @@ applications:
     channel: latest/edge
 
   keystone-saml-mellon1:
-    charm: ../../../keystone-saml-mellon_amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu@24.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp1'
@@ -197,17 +197,18 @@ applications:
       nameid-formats: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
 
   test-saml-idp1:
-    charm: ch:ionutbalutoiu-test-saml-idp
-    series: focal
+    charm: ch:test-saml-idp
+    channel: latest/edge
     num_units: 1
     options:
       idp-name: 'test-saml-idp1'
       protocol-name: 'mapped'
       auth-user-name: 'user1'
       auth-user-password: 'userpass1'
+      simple-saml-php-version: 1.19.5
 
   keystone-saml-mellon2:
-    charm: ../../../keystone-saml-mellon_ubuntu-22.04-amd64.charm
+    charm: ../../../keystone-saml-mellon_ubuntu@24.04-amd64.charm
     num_units: 0
     options:
       idp-name: 'test-saml-idp2'
@@ -217,14 +218,15 @@ applications:
       nameid-formats: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
 
   test-saml-idp2:
-    charm: ch:ionutbalutoiu-test-saml-idp
-    series: focal
+    charm: ch:test-saml-idp
+    channel: latest/edge
     num_units: 1
     options:
       idp-name: 'test-saml-idp2'
       protocol-name: 'mapped'
       auth-user-name: 'user2'
       auth-user-password: 'userpass2'
+      simple-saml-php-version: 1.19.5
 
   keystone-hacluster:
     charm: ch:hacluster
