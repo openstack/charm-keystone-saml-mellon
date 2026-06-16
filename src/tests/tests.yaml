@@ -8,7 +8,6 @@ gate_bundles:
 
 dev_bundles:
 - jammy-bobcat
-- mantic-bobcat
 
 configure:
 - zaza.openstack.charm_tests.vault.setup.auto_initialize
@@ -51,7 +50,3 @@ target_deploy_status:
   test-saml-idp2:
     workload-status: blocked
     workload-status-message-prefix: "sp-metadata resource is not a well-formed xml file"
-
-tests_options:
-  force_deploy:
-    - mantic-bobcat
